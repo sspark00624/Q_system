@@ -1,0 +1,3274 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>품질 관리 시스템</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f4f6f9;
+  --white: #ffffff;
+  --surface: #f8fafc;
+  --border: #e4e9f0;
+  --border-dark: #cdd5e0;
+  --sidebar-bg: #0f1923;
+  --sidebar-text: #8fa3b8;
+  --sidebar-active: #ffffff;
+  --accent: #1a56db;
+  --accent-light: #eef2ff;
+  --accent-hover: #1648c0;
+  --danger: #e02424;
+  --danger-light: #fdf2f2;
+  --warning: #d97706;
+  --warning-light: #fffbeb;
+  --success: #057a55;
+  --success-light: #f3faf7;
+  --text: #111928;
+  --text-muted: #6b7c93;
+  --text-light: #9aa5b4;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow: 0 1px 4px rgba(0,0,0,0.07), 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+  --radius: 10px;
+  --radius-lg: 14px;
+  --sidebar-w: 180px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--sidebar-bg);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+}
+
+.sidebar-logo {
+  padding: 16px 14px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.logo-tag {
+  font-size: 10px;
+  color: var(--accent);
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.logo-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.3;
+}
+
+.sidebar-section-label {
+  font-size: 10px;
+  color: rgba(143,163,184,0.5);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 12px 14px 4px;
+  font-family: 'DM Mono', monospace;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  cursor: pointer;
+  color: var(--sidebar-text);
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.15s;
+  border-left: 3px solid transparent;
+  position: relative;
+}
+
+.nav-item:hover { color: #fff; background: rgba(255,255,255,0.04); }
+
+.nav-item.active {
+  color: #fff;
+  background: rgba(26,86,219,0.18);
+  border-left-color: var(--accent);
+}
+
+.nav-icon { font-size: 13px; width: 16px; text-align: center; }
+
+.nav-badge {
+  margin-left: auto;
+  background: var(--danger);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 99px;
+  font-family: 'DM Mono', monospace;
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+  padding: 10px 14px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  font-size: 12px;
+  color: rgba(143,163,184,0.5);
+  font-family: 'DM Mono', monospace;
+}
+
+/* ─── MAIN ─── */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ─── TOPBAR ─── */
+.topbar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.topbar-left h2 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.topbar-left .breadcrumb {
+  font-size: 11.5px;
+  color: var(--text-light);
+  margin-top: 1px;
+  font-family: 'DM Mono', monospace;
+}
+
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Noto Sans KR', sans-serif;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-dark);
+}
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+.btn-sm { padding: 5px 12px; font-size: 12px; line-height: 1.4; text-align: center; }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { opacity: 0.88; }
+.btn-success { background: var(--success); color: #fff; }
+
+/* ─── CONTENT ─── */
+.content {
+  flex: 1;
+  overflow: hidden;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* ─── PAGES ─── */
+.page { display: none !important; }
+
+/* 일반 페이지 (대시보드, 보고서 등) */
+.page.active {
+  display: block !important;
+  overflow-y: auto;
+  padding: 24px 28px;
+  flex: 1;
+  min-height: 0;
+}
+
+/* 불량관리 페이지만 flex 레이아웃 */
+#page-defects.active {
+  display: flex !important;
+  flex-direction: column;
+  padding: 24px 28px 16px;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ─── KPI GRID ─── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.kpi-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+.kpi-card:hover { box-shadow: var(--shadow); }
+
+.kpi-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.kpi-card.blue::after { background: var(--accent); }
+.kpi-card.green::after { background: #057a55; }
+.kpi-card.orange::after { background: var(--warning); }
+.kpi-card.red::after { background: var(--danger); }
+
+.kpi-icon { font-size: 25px; margin-bottom: 10px; }
+.kpi-label { font-size: 13px; color: var(--text-muted); font-weight: 500; margin-bottom: 4px; }
+.kpi-value {
+  font-family: 'DM Mono', monospace;
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1;
+}
+.kpi-card.blue .kpi-value { color: var(--accent); }
+.kpi-card.green .kpi-value { color: #057a55; }
+.kpi-card.orange .kpi-value { color: var(--warning); }
+.kpi-card.red .kpi-value { color: var(--danger); }
+.kpi-sub { font-size: 15px; color: var(--text-light); margin-top: 6px; }
+
+/* ─── GRID LAYOUTS ─── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+.grid-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; margin-bottom: 20px; }
+
+/* ─── CARD ─── */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.card-sub {
+  font-size: 13px;
+  color: var(--text-light);
+  font-family: 'DM Mono', monospace;
+  margin-top: 1px;
+}
+
+/* ─── BAR CHART ─── */
+.bar-list { display: flex; flex-direction: column; gap: 11px; }
+.bar-row { display: flex; align-items: center; gap: 10px; }
+.bar-lbl { font-size: 14px; color: var(--text-muted); width: 68px; flex-shrink: 0; }
+.bar-track { flex: 1; background: var(--bg); border-radius: 99px; height: 8px; }
+.bar-fill { height: 100%; border-radius: 99px; transition: width 0.8s ease; }
+.bar-num { font-size: 13px; font-family: 'DM Mono', monospace; color: var(--text-muted); width: 34px; text-align: right; }
+
+/* ─── BADGES ─── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 9px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.badge.critical { background: var(--danger-light); color: var(--danger); }
+.badge.major { background: var(--warning-light); color: var(--warning); }
+.badge.minor { background: var(--success-light); color: var(--success); }
+.badge.open { background: var(--accent-light); color: var(--accent); }
+.badge.closed { background: #f1f5f9; color: var(--text-muted); }
+
+/* ─── TABLE ─── */
+
+.table-wrap { overflow-x: auto; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th {
+  text-align: left;
+  padding: 9px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+  background: var(--surface);
+}
+tbody td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr { transition: background 0.1s; cursor: pointer; }
+tbody tr:hover td { background: #f8faff; }
+
+/* ─── FILTER ROW ─── */
+.filter-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-wrap { position: relative; }
+.search-input {
+  background: var(--white);
+  border: 1px solid var(--border-dark);
+  border-radius: 8px;
+  padding: 8px 12px 8px 34px;
+  font-size: 13px;
+  font-family: 'Noto Sans KR', sans-serif;
+  color: var(--text);
+  outline: none;
+  width: 220px;
+  transition: border-color 0.2s;
+}
+.search-input:focus { border-color: var(--accent); }
+.search-icon-pos { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--text-light); }
+
+.filter-select {
+  background: var(--white);
+  border: 1px solid var(--border-dark);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-family: 'Noto Sans KR', sans-serif;
+  color: var(--text);
+  outline: none;
+  cursor: pointer;
+}
+.filter-select:focus { border-color: var(--accent); }
+
+.filter-chip {
+  padding: 6px 13px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.filter-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* ─── CHECKLIST ─── */
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  margin-bottom: 7px;
+  background: var(--white);
+  transition: border-color 0.15s;
+}
+.check-item:hover { border-color: var(--border-dark); }
+.check-item.checked { background: var(--success-light); border-color: #a7f3d0; }
+.checkbox {
+  width: 20px; height: 20px;
+  border: 2px solid var(--border-dark);
+  border-radius: 6px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  transition: all 0.2s;
+  color: transparent;
+}
+.check-item.checked .checkbox { background: var(--success); border-color: var(--success); color: #fff; }
+.check-item.checked .check-label { color: var(--text-muted); }
+.check-label { flex: 1; font-size: 13.5px; font-weight: 500; }
+.check-std { font-size: 11.5px; color: var(--text-light); font-family: 'DM Mono', monospace; }
+
+/* ── 귀책처 멀티셀렉트 ── */
+.ms-wrap { position: relative; }
+.ms-trigger {
+  width: 100%; min-height: 42px; padding: 8px 34px 8px 12px;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  background: var(--white); cursor: pointer;
+  font-size: 13.5px; color: var(--text); text-align: left;
+  display: flex; flex-wrap: wrap; gap: 4px; align-items: center;
+  transition: border-color .15s;
+}
+.ms-trigger:hover, .ms-trigger.open { border-color: var(--primary); }
+.ms-trigger::after {
+  content: '▾'; position: absolute; right: 12px; top: 50%;
+  transform: translateY(-50%); color: var(--text-muted); font-size: 12px; pointer-events: none;
+}
+.ms-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--primary); color: #fff;
+  border-radius: 5px; padding: 2px 7px; font-size: 12px; font-weight: 600;
+}
+.ms-tag .ms-remove { cursor: pointer; font-size: 13px; line-height: 1; opacity: .8; }
+.ms-tag .ms-remove:hover { opacity: 1; }
+.ms-placeholder { color: var(--text-light); font-size: 13px; }
+.ms-dropdown {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: 10px; z-index: 200; box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  overflow: hidden; display: none;
+}
+.ms-dropdown.open { display: block; }
+.ms-option {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 14px; cursor: pointer; font-size: 13.5px;
+  transition: background .1s;
+}
+.ms-option:hover { background: var(--bg); }
+.ms-option.selected { background: var(--primary-light, #eff6ff); }
+.ms-option .ms-chk {
+  width: 18px; height: 18px; border: 2px solid var(--border-dark);
+  border-radius: 5px; display: flex; align-items: center; justify-content: center;
+  font-size: 11px; flex-shrink: 0; transition: all .15s;
+  color: transparent;
+}
+.ms-option.selected .ms-chk { background: var(--primary); border-color: var(--primary); color: #fff; }
+.ms-opt-ko { font-weight: 500; }
+.ms-opt-en { font-size: 11px; color: var(--text-muted); margin-left: auto; }
+
+/* ─── SEGMENT TABS ─── */
+.seg-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 3px;
+  width: fit-content;
+  margin-bottom: 18px;
+}
+.seg-tab {
+  padding: 7px 18px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: 'Noto Sans KR', sans-serif;
+  transition: all 0.2s;
+}
+.seg-tab.active { background: var(--white); color: var(--accent); box-shadow: var(--shadow-sm); }
+
+/* ─── PROGRESS BAR ─── */
+.progress-bar-wrap { margin-bottom: 16px; }
+.progress-track { background: var(--border); border-radius: 99px; height: 6px; }
+.progress-fill { height: 100%; border-radius: 99px; background: var(--success); transition: width 0.5s ease; }
+.progress-info { display: flex; justify-content: space-between; margin-top: 5px; }
+.progress-label { font-size: 12px; color: var(--text-muted); }
+.progress-val { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--success); font-weight: 600; }
+
+/* ─── MODAL ─── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(3px);
+}
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  width: 560px;
+  max-height: 88vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+  animation: modalIn 0.22s ease;
+}
+@keyframes modalIn { from { opacity:0; transform:translateY(12px) scale(0.98); } to { opacity:1; transform:none; } }
+
+.modal-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  background: var(--white);
+  z-index: 2;
+}
+.modal-title { font-size: 16px; font-weight: 700; }
+.modal-close {
+  width: 28px; height: 28px;
+  border: none;
+  background: var(--bg);
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 15px;
+  color: var(--text-muted);
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+}
+.modal-close:hover { background: var(--border); }
+
+.modal-body { padding: 20px 24px; }
+.modal-footer {
+  padding: 14px 24px 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  position: sticky;
+  bottom: 0;
+  background: var(--white);
+  z-index: 2;
+}
+
+/* ─── FORM ─── */
+.form-group { margin-bottom: 14px; }
+.form-label { font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; display: block; }
+.form-required { color: var(--danger); margin-left: 2px; }
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 12px;
+  color: var(--text);
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 13.5px;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--accent);
+  background: var(--white);
+}
+.form-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+/* ─── PHOTO UPLOAD ─── */
+.photo-grid { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+.photo-add-btn {
+  width: 80px; height: 80px;
+  border: 2px dashed var(--border-dark);
+  border-radius: 10px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 12px;
+  gap: 4px;
+  transition: border-color 0.2s;
+}
+.photo-add-btn:hover { border-color: var(--accent); color: var(--accent); }
+.photo-thumb-wrap { position: relative; width: 80px; height: 80px; }
+.photo-thumb-wrap img { width: 80px; height: 80px; border-radius: 10px; object-fit: cover; display: block; }
+.photo-remove {
+  position: absolute; top: -6px; right: -6px;
+  width: 18px; height: 18px;
+  background: var(--danger); color: #fff;
+  border-radius: 50%; font-size: 10px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; border: 2px solid var(--white); font-weight: 700;
+}
+
+/* ─── DETAIL PANEL ─── */
+.detail-row { display: flex; padding: 10px 0; border-bottom: 1px solid var(--border); gap: 12px; }
+.detail-row:last-child { border-bottom: none; }
+.detail-key { font-size: 12px; color: var(--text-muted); width: 110px; flex-shrink: 0; padding-top: 1px; }
+.detail-val { font-size: 13px; font-weight: 600; flex: 1; }
+
+/* ─── REPORT TABLE ─── */
+.report-table td { font-size: 13px; }
+.report-table .ok { color: var(--success); font-weight: 700; font-family: 'DM Mono', monospace; }
+.report-table .ng { color: var(--danger); font-weight: 700; font-family: 'DM Mono', monospace; }
+
+/* ─── TREND SVG ─── */
+.trend-card { padding: 20px 20px 12px; }
+
+/* ─── EMPTY STATE ─── */
+.empty-state { text-align: center; padding: 50px 20px; color: var(--text-muted); }
+.empty-state .empty-icon { font-size: 36px; margin-bottom: 10px; }
+.empty-state p { font-size: 14px; }
+
+/* ─── SUMMARY BOX ─── */
+.summary-box {
+  background: #f0f7ff;
+  border: 1px solid #c3d9ff;
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--text-muted);
+  margin-top: 16px;
+}
+
+.toast-wrap {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  min-width: 300px;
+  max-width: 380px;
+  animation: toastIn 0.3s ease;
+  pointer-events: auto;
+}
+@keyframes toastIn {
+  from { opacity:0; transform:translateY(12px) scale(0.97); }
+  to   { opacity:1; transform:none; }
+}
+.toast.fade-out { animation: toastOut 0.3s ease forwards; }
+@keyframes toastOut {
+  to { opacity:0; transform:translateY(8px) scale(0.97); }
+}
+.toast-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+.toast-body { flex: 1; }
+.toast-title { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+.toast-msg   { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.toast.success { border-left: 3px solid var(--success); }
+.toast.error   { border-left: 3px solid var(--danger); }
+.toast.info    { border-left: 3px solid var(--accent); }
+
+/* ─── 자동동기화 표시 ─── */
+.poll-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--success);
+  margin-right: 4px;
+  animation: pollPulse 2s ease infinite;
+}
+@keyframes pollPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+.sync-chip {
+  position: fixed;
+  bottom: 28px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--sidebar-bg);
+  color: #fff;
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  padding: 5px 16px;
+  border-radius: 99px;
+  z-index: 150;
+  display: none;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  pointer-events: none;
+}
+.sync-chip.visible { display: flex; }
+
+/* ─── UPLOAD OVERLAY ─── */
+.upload-overlay {
+  position: fixed; inset: 0;
+  background: rgba(26,86,219,0.08);
+  border: 3px dashed var(--accent);
+  z-index: 300;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent);
+  pointer-events: none;
+}
+.upload-overlay.active { display: flex; }
+
+/* ══════════════════════════════════════
+   모바일 반응형
+══════════════════════════════════════ */
+
+/* 햄버거 버튼 */
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  flex-direction: column;
+  gap: 5px;
+}
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: all 0.25s;
+}
+
+/* 사이드바 오버레이 (모바일) */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 199;
+}
+.sidebar-overlay.active { display: block; }
+
+/* 하단 탭바 */
+.mobile-tabbar {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 60px;
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  z-index: 150;
+  justify-content: space-around;
+  align-items: center;
+}
+.mobile-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+  padding: 6px 0;
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  transition: color 0.15s;
+  position: relative;
+}
+.mobile-tab.active { color: var(--accent); }
+.mobile-tab-icon { font-size: 20px; line-height: 1; }
+.mobile-tab-badge {
+  position: absolute;
+  top: 4px;
+  right: calc(50% - 18px);
+  background: var(--danger);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 99px;
+  font-family: 'DM Mono', monospace;
+}
+
+/* 모바일 등록 FAB 버튼 */
+.fab-btn {
+  display: none;
+  position: fixed;
+  bottom: 72px;
+  right: 18px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 26px;
+  line-height: 1;
+  border: none;
+  cursor: pointer;
+  z-index: 149;
+  box-shadow: 0 4px 16px rgba(26,86,219,0.35);
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  /* 레이아웃 */
+  body { overflow: auto; flex-direction: column; }
+
+  /* 사이드바: 슬라이드 오버레이 */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    z-index: 200;
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+  }
+  .sidebar.open { transform: translateX(0); }
+
+  /* 메인 */
+  .main { width: 100%; min-height: 100vh; }
+
+  /* 탑바 */
+  .topbar {
+    padding: 0 14px;
+    height: 52px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .topbar-left h2 { font-size: 15px; }
+  .topbar-right .btn-ghost { display: none; } /* 내보내기 숨김 */
+  .topbar-right .btn-primary { display: none; } /* 상단 등록 버튼 숨김 (FAB로 대체) */
+
+  /* 햄버거 표시 */
+  .hamburger { display: flex; }
+
+  /* 콘텐츠 여백 (하단 탭바 공간) */
+  .content { padding: 16px 14px 80px; }
+
+  /* KPI 그리드: 2열 */
+  .kpi-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .kpi-card { padding: 14px; }
+  .kpi-value { font-size: 24px !important; }
+  .kpi-label { font-size: 11px !important; }
+  .kpi-sub   { font-size: 11px !important; }
+
+  /* 차트 그리드: 1열 */
+  .grid-2 { grid-template-columns: 1fr; gap: 10px; }
+  .grid-3 { grid-template-columns: 1fr; gap: 10px; }
+
+  /* 테이블 가로 스크롤 */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { min-width: 700px; }
+
+  /* 필터 행 */
+  .filter-row { flex-wrap: wrap; gap: 8px; }
+  .search-wrap { width: 100%; }
+  .search-input { width: 100%; }
+
+  /* 모달 전체화면 */
+  .modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-radius: 16px 16px 0 0 !important;
+    position: fixed !important;
+    bottom: 60px !important;
+    left: 0 !important;
+    right: 0 !important;
+    max-height: calc(90vh - 60px) !important;
+    overflow-y: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .modal-body {
+    overflow-y: auto !important;
+    flex: 1 !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .modal-footer {
+    flex-shrink: 0 !important;
+    position: static !important;
+    padding-bottom: 20px !important;
+  }
+  .modal-overlay { align-items: flex-end !important; }
+
+  /* 하단 탭바·FAB 표시 */
+  .mobile-tabbar { display: flex; }
+  .fab-btn { display: flex; }
+
+  /* 발생처 개별 차트 1열 */
+  #occ-charts-wrap { grid-template-columns: 1fr !important; }
+
+  /* sync-chip 위치 조정 */
+  .sync-chip { bottom: 70px; }
+}
+
+/* 발생처 탭 */
+.occ-tab {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border-dark);
+  background: var(--white);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: 'Noto Sans KR', sans-serif;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.occ-tab:hover { border-color: var(--accent); color: var(--accent); }
+.occ-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+</style>
+</head>
+<body>
+
+<!-- ─── 비밀번호 잠금 화면 ─── -->
+<div id="lock-screen" style="
+  position:fixed;inset:0;z-index:99999;
+  background:linear-gradient(135deg,#0f1923 0%,#1a2d40 100%);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Noto Sans KR',sans-serif;
+">
+  <div style="
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.12);
+    border-radius:20px;padding:48px 40px;
+    width:100%;max-width:380px;text-align:center;
+    box-shadow:0 24px 60px rgba(0,0,0,0.5);
+  ">
+    <div style="margin-bottom:8px;"><span style="font-size:36px;">🏭</span></div>
+    <div style="font-size:11px;font-weight:600;color:#4a9eff;letter-spacing:2px;margin-bottom:6px;">QMS V1.0</div>
+    <div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:4px;">품질 관리 시스템</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:32px;">Quality Management System</div>
+
+    <div style="position:relative;margin-bottom:12px;">
+      <input id="lock-input" type="password"
+        placeholder="비밀번호 입력 · Enter Password"
+        onkeydown="if(event.key==='Enter')checkPassword()"
+        style="
+          width:100%;box-sizing:border-box;
+          padding:14px 48px 14px 18px;
+          border-radius:10px;border:1.5px solid rgba(255,255,255,0.15);
+          background:rgba(255,255,255,0.08);
+          color:#fff;font-size:15px;
+          font-family:'Noto Sans KR',sans-serif;
+          outline:none;transition:border 0.2s;
+          letter-spacing:3px;
+        "
+        onfocus="this.style.borderColor='#4a9eff'"
+        onblur="this.style.borderColor='rgba(255,255,255,0.15)'"
+      >
+      <button onclick="toggleLockPw()" style="
+        position:absolute;right:14px;top:50%;transform:translateY(-50%);
+        background:none;border:none;cursor:pointer;
+        color:rgba(255,255,255,0.5);font-size:16px;padding:0;
+      " id="lock-eye-btn">👁</button>
+    </div>
+
+    <div id="lock-error" style="
+      font-size:12px;color:#ff6b6b;margin-bottom:12px;
+      height:18px;transition:opacity 0.3s;opacity:0;
+    ">비밀번호가 올바르지 않습니다 · Incorrect Password</div>
+
+    <button onclick="checkPassword()" style="
+      width:100%;padding:14px;border-radius:10px;
+      background:linear-gradient(135deg,#1a56db,#4a9eff);
+      border:none;color:#fff;font-size:15px;font-weight:700;
+      font-family:'Noto Sans KR',sans-serif;cursor:pointer;
+      transition:opacity 0.2s;letter-spacing:0.5px;
+    "
+    onmouseover="this.style.opacity='.88'"
+    onmouseout="this.style.opacity='1'"
+    >확인 · Confirm</button>
+
+    <div style="margin-top:20px;font-size:11px;color:rgba(255,255,255,0.25);">
+      권한이 없는 접근은 금지됩니다<br>Unauthorized access is prohibited
+    </div>
+  </div>
+</div>
+
+<!-- SYNC CHIP -->
+<div class="sync-chip" id="sync-chip">
+  <span class="poll-dot"></span>
+  자동 동기화 중 · <span id="poll-countdown">60</span>초 후 갱신
+</div>
+
+<!-- 사이드바 오버레이 (모바일) -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<!-- 하단 탭바 (모바일) -->
+<div class="mobile-tabbar">
+  <div class="mobile-tab active" id="mob-tab-home" onclick="goPage('home',null);setMobTab('home')">
+    <span class="mobile-tab-icon">📊</span>
+    <span>품질 현황</span>
+  </div>
+  <div class="mobile-tab" id="mob-tab-defects" onclick="goPage('defects',null);setMobTab('defects')">
+    <span class="mobile-tab-icon">🔴</span>
+    <span>불량 관리</span>
+  </div>
+  <div class="mobile-tab" id="mob-tab-report" onclick="goPage('report',null);setMobTab('report')">
+    <span class="mobile-tab-icon">📄</span>
+    <span>보고서</span>
+  </div>
+</div>
+
+<!-- FAB 등록 버튼 (모바일) -->
+<button class="fab-btn" onclick="openModal()" aria-label="불량 등록">＋</button>
+
+<!-- ─── SIDEBAR ─── -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-tag">QMS v1.0</div>
+    <div class="logo-title">품질 관리<br>시스템<br><span style="font-size:12px;font-weight:400;opacity:.6;letter-spacing:0.5px;">Quality Management</span></div>
+  </div>
+  <div class="sidebar-section-label">메뉴 · Menu</div>
+  <div class="nav-item active" onclick="goPage('home',this)">
+    <span class="nav-icon">📊</span> 품질 현황<br><span style="font-size:11px;font-weight:400;opacity:.6;padding-left:22px;">Quality Status</span>
+  </div>
+  <div class="nav-item" onclick="goPage('defects',this)">
+    <span class="nav-icon">🔴</span> 불량 관리<br><span style="font-size:11px;font-weight:400;opacity:.6;padding-left:22px;">Defect Mgmt</span>
+  </div>
+  <div class="nav-item" onclick="goPage('report',this)">
+    <span class="nav-icon">📄</span> 월간 보고서<br><span style="font-size:11px;font-weight:400;opacity:.6;padding-left:22px;">Monthly Report</span>
+  </div>
+  <div style="padding: 6px 8px 4px;">
+    <button id="sheet-btn" onclick="openGasSetup()" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:7px 10px;color:var(--sidebar-text);font-size:11px;font-family:'Noto Sans KR',sans-serif;font-weight:600;cursor:pointer;text-align:left;transition:background 0.15s;">
+      🔗 Sheets 연동 설정<br><span style="font-size:10px;font-weight:400;opacity:.6;">Connection Setup</span>
+    </button>
+  </div>
+  <div style="padding: 4px 8px 6px; display:flex; gap:5px;">
+    <button onclick="sheetLoad()" title="Sheets에서 최신 데이터 불러오기"
+      style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:5px 6px;color:var(--sidebar-text);font-size:11px;font-family:'Noto Sans KR',sans-serif;font-weight:600;cursor:pointer;transition:all 0.15s;">
+      🔄 새로고침<br><span style="font-size:10px;font-weight:400;opacity:.6;">Refresh</span>
+    </button>
+    <button id="poll-btn" onclick="togglePolling()" title="60초마다 자동으로 Sheets 확인"
+      style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:5px 6px;color:var(--sidebar-text);font-size:11px;font-family:'Noto Sans KR',sans-serif;font-weight:600;cursor:pointer;transition:all 0.15s;">
+      ⏱ 자동동기화<br><span style="font-size:10px;font-weight:400;opacity:.6;">Auto Sync</span>
+    </button>
+  </div>
+  </div>
+  <div class="sidebar-bottom">
+    2025-02-24 &nbsp;|&nbsp; v1.0.0
+  </div>
+</div>
+
+<!-- ─── MAIN ─── -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button class="hamburger" onclick="toggleSidebar()" aria-label="메뉴">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="topbar-left">
+        <h2 id="page-title">📊 품질 현황</h2>
+        <div class="breadcrumb" id="page-sub">품질 관리</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ════ 대시보드 ════ -->
+    <div id="page-home" class="page active">
+
+      <!-- 생산수량 입력 -->
+      <div id="prod-qty-wrap" style="background:var(--white);border:1px solid var(--border);border-radius:12px;padding:12px 18px;margin-bottom:14px;box-shadow:var(--shadow-sm);"></div>
+
+      <!-- KPI 카드 -->
+      <div class="kpi-grid">
+        <div class="kpi-card blue">
+          <div class="kpi-icon">🔬</div>
+          <div class="kpi-label">당월 불량 건수<br><span style="font-size:10px;font-weight:400;color:var(--text-muted);">Monthly Defects</span></div>
+          <div class="kpi-value" id="kpi-total">-</div>
+          <div class="kpi-sub" id="kpi-total-sub">당월 등록 기준</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-icon">🏭</div>
+          <div class="kpi-label">고객사 불량 건수<br><span style="font-size:10px;font-weight:400;color:var(--text-muted);">Customer Defects</span></div>
+          <div class="kpi-value" id="kpi-closed-rate">-</div>
+          <div class="kpi-sub" id="kpi-closed-sub">HMI 1 + HMI 2</div>
+        </div>
+        <div class="kpi-card orange">
+          <div class="kpi-icon">📊</div>
+          <div class="kpi-label">GQMS 등록 건수<br><span style="font-size:10px;font-weight:400;color:var(--text-muted);">GQMS Registered</span></div>
+          <div class="kpi-value" id="kpi-thismonth">-</div>
+          <div class="kpi-sub" id="kpi-thismonth-sub">비고 GQMS 기재 건</div>
+        </div>
+        <div class="kpi-card red">
+          <div class="kpi-icon">⚙️</div>
+          <div class="kpi-label">GQMS PPM<br><span style="font-size:10px;font-weight:400;color:var(--text-muted);">GQMS PPM</span></div>
+          <div class="kpi-value" id="kpi-open">-</div>
+          <div class="kpi-sub" id="kpi-open-sub">생산수량 기준</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- 불량 유형별 -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">불량 유형별 현황<br><span style="font-size:11px;font-weight:400;color:var(--text-muted);">Defect Type</span></div>
+              <div class="card-sub">전체 누계 (Total)</div>
+            </div>
+          </div>
+          <div class="bar-list" id="chart-type"></div>
+        </div>
+
+        <!-- 모델별 현황 -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">모델별 현황<br><span style="font-size:11px;font-weight:400;color:var(--text-muted);">By Model</span></div>
+              <div class="card-sub">전체 누계 (Total)</div>
+            </div>
+          </div>
+          <div class="bar-list" id="chart-model"></div>
+        </div>
+
+        <!-- 발생처별 현황 -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">발생처별 현황<br><span style="font-size:11px;font-weight:400;color:var(--text-muted);">By Occurrence</span></div>
+              <div class="card-sub">전체 누계 (Total)</div>
+            </div>
+          </div>
+          <div class="bar-list" id="chart-occurrence"></div>
+        </div>
+
+        <!-- 귀책처별 현황 -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">귀책처별 현황<br><span style="font-size:11px;font-weight:400;color:var(--text-muted);">By Responsibility</span></div>
+              <div class="card-sub">전체 누계 (Total)</div>
+            </div>
+          </div>
+          <div class="bar-list" id="chart-owner"></div>
+        </div>
+
+        <!-- 품목명별 현황 -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">품목명별 현황<br><span style="font-size:11px;font-weight:400;color:var(--text-muted);">By Part Name</span></div>
+              <div class="card-sub">전체 누계 (Total)</div>
+            </div>
+          </div>
+          <div class="bar-list" id="chart-item"></div>
+        </div>
+
+      </div><!-- /grid-2 -->
+
+      <!-- 월별 추이 -->
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">주별 불량 추이<br><span style="font-size:11px;font-weight:400;color:var(--text-muted);">Weekly Defect Trend</span></div>
+            <div class="card-sub" id="trend-sub">당월 주별 현황 (Weekly)</div>
+          </div>
+        </div>
+        <svg id="trend-svg" width="100%" height="130" viewBox="-15 0 950 130" preserveAspectRatio="none"></svg>
+      </div>
+
+      <!-- 발생처별 추이 -->
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">발생처별 주별 추이<br><span style="font-size:11px;font-weight:400;color:var(--text-muted);">Weekly Trend by Occurrence</span></div>
+            <div class="card-sub">당월 주별 · 발생처별 개별 현황</div>
+          </div>
+        </div>
+        <div id="occ-charts-wrap" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;"></div>
+      </div>
+
+    </div><!-- /page-home -->
+
+    <!-- ════ 불량 관리 ════ -->
+    <div id="page-defects" class="page" style="position:relative;display:flex;flex-direction:column;height:100%;">
+      <div class="filter-row" style="flex-wrap:wrap;gap:8px;flex-shrink:0;">
+        <!-- 날짜 범위 선택 -->
+        <div style="display:flex;align-items:center;gap:6px;background:var(--white);border:1px solid var(--border-dark);border-radius:8px;padding:5px 10px;flex-wrap:wrap;">
+          <button onclick="changeFilterMonth(-1)" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--text-muted);padding:0 2px;" title="이전 월">◀</button>
+          <span id="filter-month-label" style="font-size:12px;font-weight:700;color:var(--text);min-width:70px;text-align:center;"></span>
+          <button onclick="changeFilterMonth(1)" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--text-muted);padding:0 2px;" title="다음 월">▶</button>
+          <div style="width:1px;height:18px;background:var(--border);margin:0 4px;"></div>
+          <span style="font-size:11px;color:var(--text-muted);font-weight:600;">시작</span>
+          <input type="date" id="filter-date-from" onchange="applyDateRange()"
+            style="border:1px solid var(--border-dark);border-radius:6px;padding:3px 7px;font-size:12px;color:var(--text);background:var(--surface);cursor:pointer;">
+          <span style="font-size:11px;color:var(--text-muted);">~</span>
+          <span style="font-size:11px;color:var(--text-muted);font-weight:600;">종료</span>
+          <input type="date" id="filter-date-to" onchange="applyDateRange()"
+            style="border:1px solid var(--border-dark);border-radius:6px;padding:3px 7px;font-size:12px;color:var(--text);background:var(--surface);cursor:pointer;">
+          <button onclick="clearDateRange()" style="background:none;border:none;cursor:pointer;font-size:11px;color:var(--text-muted);padding:2px 6px;border-radius:4px;border:1px solid var(--border);">전체 All</button>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:8px;">
+          <input type="file" id="excel-upload-input" accept=".csv,.xlsx,.xls" style="display:none;" onchange="handleExcelUpload(this)">
+          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('excel-upload-input').click()">📤 엑셀 업로드<br><span style="font-size:9px;opacity:.7;">Excel Upload</span></button>
+          <button class="btn btn-ghost btn-sm" onclick="downloadExcel()">📥 엑셀 다운로드<br><span style="font-size:9px;opacity:.7;">Excel Download</span></button>
+          <button class="btn btn-primary btn-sm" onclick="openModal()">＋ 불량 등록<br><span style="font-size:9px;opacity:.85;">Register</span></button>
+        </div>
+      </div>
+      <div id="occ-tab-wrap" style="display:flex;gap:6px;flex-wrap:wrap;padding:8px 0 4px 0;flex-shrink:0;">
+        <button class="occ-tab active" data-occ="" onclick="setOccTab(this,'')">전체<span style="font-size:9px;opacity:.7;margin-left:3px;">All</span></button>
+        <button class="occ-tab" data-occ="수입검사" onclick="setOccTab(this,'수입검사')">수입검사<span style="font-size:9px;opacity:.7;margin-left:3px;">Incoming</span></button>
+        <button class="occ-tab" data-occ="프레스라인" onclick="setOccTab(this,'프레스라인')">프레스라인<span style="font-size:9px;opacity:.7;margin-left:3px;">Press Line</span></button>
+        <button class="occ-tab" data-occ="조립라인" onclick="setOccTab(this,'조립라인')">조립라인<span style="font-size:9px;opacity:.7;margin-left:3px;">ASSY LINE</span></button>
+        <button class="occ-tab" data-occ="PDI" onclick="setOccTab(this,'PDI')">PDI</button>
+        <button class="occ-tab" data-occ="HMI 1" onclick="setOccTab(this,'HMI 1')">HMI 1</button>
+        <button class="occ-tab" data-occ="HMI 2" onclick="setOccTab(this,'HMI 2')">HMI 2</button>
+        <button class="occ-tab" data-occ="HMI" onclick="setOccTab(this,'HMI')">HMI<span style="font-size:9px;opacity:.7;margin-left:3px;">1+2</span></button>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden;flex:1;display:flex;flex-direction:column;min-height:0;">
+        <div class="table-wrap" id="table-wrap-main" style="flex:1;overflow:auto;">
+          <table id="defect-table">
+            <thead>
+              <tr>
+                <th style="width:52px;"></th>
+                <th>차종<br><span style="font-size:10px;font-weight:400;opacity:.7;">Model</span></th>
+                <th>품번<br><span style="font-size:10px;font-weight:400;opacity:.7;">Part No.</span></th>
+                <th>ASSY품목명<br><span style="font-size:10px;font-weight:400;opacity:.7;">Part Name</span></th>
+                <th>불량 유형<br><span style="font-size:10px;font-weight:400;opacity:.7;">Defect Type</span></th>
+                <th>발생처<br><span style="font-size:10px;font-weight:400;opacity:.7;">Occurrence</span></th>
+                <th>귀책처<br><span style="font-size:10px;font-weight:400;opacity:.7;">Responsibility</span></th>
+                <th>등록일<br><span style="font-size:10px;font-weight:400;opacity:.7;">Date</span></th>
+                <th style="width:60px;text-align:center;">사진<br><span style="font-size:10px;font-weight:400;opacity:.7;">Photo</span></th>
+                <th>불량 내용<br><span style="font-size:10px;font-weight:400;opacity:.7;">Description</span></th>
+                <th>수량<br><span style="font-size:10px;font-weight:400;opacity:.7;">Qty</span></th>
+                <th>대책<br><span style="font-size:10px;font-weight:400;opacity:.7;">Countermeasure</span></th>
+                <th>비고<br><span style="font-size:10px;font-weight:400;opacity:.7;">Remark</span></th>
+              </tr>
+            </thead>
+            <tbody id="defect-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /page-defects -->
+
+    <!-- ════ 월간 보고서 ════ -->
+    <div id="page-report" class="page">
+
+      <!-- 월 선택 -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <button class="btn btn-ghost btn-sm" onclick="changeReportMonth(-1)">◀</button>
+        <span id="report-month-label" style="font-size:15px;font-weight:700;color:var(--text);min-width:100px;text-align:center;"></span>
+        <button class="btn btn-ghost btn-sm" onclick="changeReportMonth(1)">▶</button>
+      </div>
+
+      <!-- KPI 카드 -->
+      <div class="kpi-grid">
+        <div class="kpi-card blue">
+          <div class="kpi-icon">📋</div>
+          <div class="kpi-label">당월 불량 건수<br><span style="font-size:10px;font-weight:400;color:var(--text-muted);">Monthly Defects</span></div>
+          <div class="kpi-value" id="r-total">-</div>
+          <div class="kpi-sub" id="r-total-sub"></div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-icon">🏭</div>
+          <div class="kpi-label">고객사 불량 건수<br><span style="font-size:10px;font-weight:400;color:var(--text-muted);">Customer Defects</span></div>
+          <div class="kpi-value" id="r-closed-rate">-</div>
+          <div class="kpi-sub" id="r-closed-sub">HMI 1 + HMI 2</div>
+        </div>
+        <div class="kpi-card orange">
+          <div class="kpi-icon">📊</div>
+          <div class="kpi-label">고객사 불량 PPM<br><span style="font-size:10px;font-weight:400;color:var(--text-muted);">Customer PPM</span></div>
+          <div class="kpi-value" id="r-open">-</div>
+          <div class="kpi-sub" id="r-open-sub">생산수량 기준</div>
+        </div>
+        <div class="kpi-card red">
+          <div class="kpi-icon">📈</div>
+          <div class="kpi-label">전월 대비<br><span style="font-size:10px;font-weight:400;color:var(--text-muted);">vs. Prev. Month</span></div>
+          <div class="kpi-value" id="r-diff">-</div>
+          <div class="kpi-sub" id="r-diff-sub"></div>
+        </div>
+      </div>
+
+      <!-- 차트 그리드 -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div>
+            <div class="card-title">불량 유형별 현황<br><span style="font-size:11px;font-weight:400;color:var(--text-muted);">Defect Type</span></div>
+            <div class="card-sub" id="r-type-sub"></div>
+          </div></div>
+          <div id="r-chart-type"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div>
+            <div class="card-title">발생처별 현황<br><span style="font-size:11px;font-weight:400;color:var(--text-muted);">By Occurrence</span></div>
+            <div class="card-sub" id="r-occ-sub"></div>
+          </div></div>
+          <div class="bar-list" id="r-chart-occ"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div>
+            <div class="card-title">모델별 현황<br><span style="font-size:11px;font-weight:400;color:var(--text-muted);">By Model</span></div>
+            <div class="card-sub" id="r-model-sub"></div>
+          </div></div>
+          <div class="bar-list" id="r-chart-model"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div>
+            <div class="card-title">귀책처별 현황<br><span style="font-size:11px;font-weight:400;color:var(--text-muted);">By Responsibility</span></div>
+            <div class="card-sub" id="r-owner-sub"></div>
+          </div></div>
+          <div class="bar-list" id="r-chart-owner"></div>
+        </div>
+      </div>
+
+      <!-- 월별 추이 (해당 연도 12개월) -->
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-header"><div>
+          <div class="card-title">월별 불량 추이<br><span style="font-size:11px;font-weight:400;color:var(--text-muted);">Monthly Defect Trend</span></div>
+          <div class="card-sub" id="r-trend-sub"></div>
+        </div></div>
+        <svg id="r-trend-svg" width="100%" height="130" viewBox="-15 0 950 130" preserveAspectRatio="none"></svg>
+      </div>
+
+      <!-- 발생처별 개별 추이 -->
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-header"><div>
+          <div class="card-title">발생처별 월별 추이<br><span style="font-size:11px;font-weight:400;color:var(--text-muted);">Monthly Trend by Occurrence</span></div>
+          <div class="card-sub" id="r-occ-trend-sub"></div>
+        </div></div>
+        <div id="r-occ-charts-wrap" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;"></div>
+      </div>
+
+      <!-- 당월 불량 목록 -->
+      <div class="card" style="margin-top:4px;">
+        <div class="card-header"><div>
+          <div class="card-title">당월 불량 목록<br><span style="font-size:11px;font-weight:400;color:var(--text-muted);">Defect List</span></div>
+          <div class="card-sub" id="r-list-sub"></div>
+        </div></div>
+        <div class="table-wrap">
+          <table class="report-table">
+            <thead>
+              <tr>
+  <th>차종<br><span style="font-size:10px;font-weight:400;opacity:.7;">Model</span></th>
+  <th>품번<br><span style="font-size:10px;font-weight:400;opacity:.7;">Part No.</span></th>
+  <th>품목명<br><span style="font-size:10px;font-weight:400;opacity:.7;">Part Name</span></th>
+  <th>불량유형<br><span style="font-size:10px;font-weight:400;opacity:.7;">Defect Type</span></th>
+  <th>발생처<br><span style="font-size:10px;font-weight:400;opacity:.7;">Occurrence</span></th>
+  <th>수량<br><span style="font-size:10px;font-weight:400;opacity:.7;">Qty</span></th>
+  <th>귀책처<br><span style="font-size:10px;font-weight:400;opacity:.7;">Resp.</span></th>
+  <th>등록일<br><span style="font-size:10px;font-weight:400;opacity:.7;">Date</span></th>
+</tr>
+            </thead>
+            <tbody id="r-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 종합 의견 -->
+      <div class="card" style="margin-top:4px;">
+        <div class="summary-box" id="r-summary"></div>
+      </div>
+
+    </div><!-- /page-report -->
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- TOAST (fixed positioning, doesn't affect flex layout) -->
+<div class="toast-wrap" id="toast-wrap"></div>
+<!-- DRAG DROP OVERLAY -->
+<div class="upload-overlay" id="upload-overlay">
+  <span style="font-size:48px;">📂</span>
+  엑셀 파일을 여기에 놓으세요
+</div>
+
+<!-- ════ 불량 등록 모달 ════ -->
+<div class="modal-overlay" id="modal-reg">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🔴 불량 등록 <span style="font-size:12px;font-weight:400;color:var(--text-muted);">Defect Registration</span></div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">차종 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Model</span></label>
+          <select class="form-select" id="f-carmodel">
+            <option value="">선택하세요</option>
+            <option>SU2i</option>
+            <option>SU2i EV</option>
+            <option>PS7i</option>
+            <option>BI3</option>
+            <option>AI3</option>
+            <option>BN7i</option>
+            <option>MS1</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">품번 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Part No.</span></label>
+          <input class="form-input" id="f-partno" placeholder="예: PA-10324">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">품목명 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Part Name</span> <span class="form-required">*</span></label>
+          <select class="form-select" id="f-item">
+            <option value="">선택하세요</option>
+            <option>QTR</option>
+            <option>RING S/ROOF</option>
+            <option>F/DR</option>
+            <option>F/DR HSG</option>
+            <option>REINF S/OTR</option>
+            <option>T/GATE</option>
+            <option>T/LID</option>
+            <option>BACK</option>
+            <option>DASH</option>
+            <option>MBR DR BELT</option>
+            <option>SIDE SILL</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row-3">
+        <div class="form-group">
+          <label class="form-label">불량 유형 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Defect Type</span></label>
+          <select class="form-select" id="f-type">
+            <option value="치수 불량">치수 불량 (Dimensional)</option>
+            <option value="외관 불량">외관 불량 (Appearance)</option>
+            <option value="용접 불량">용접 불량 (Welding)</option>
+            <option value="기타">기타 (Others)</option>
+            <option value="공정 누락">공정 누락 (Process Omission)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">발생처 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Occurrence</span></label>
+          <select class="form-select" id="f-sev">
+            <option value="수입검사">수입검사 (Incoming)</option>
+            <option value="프레스라인">프레스라인 (Press Line)</option>
+            <option value="조립라인">조립라인 (ASSY LINE)</option>
+            <option value="PDI">PDI</option>
+            <option value="HMI 1">HMI 1</option>
+            <option value="HMI 2">HMI 2</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">불량 수량 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Qty</span></label>
+          <input class="form-input" id="f-qty" type="number" min="1" placeholder="0">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">귀책처 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Responsibility</span></label>
+          <div class="ms-wrap" id="ms-f-owner-wrap">
+            <div class="ms-trigger" id="ms-f-owner-trigger" onclick="msToggle('f-owner')">
+              <span class="ms-placeholder">귀책처 선택 (복수 선택 가능)</span>
+            </div>
+            <div class="ms-dropdown" id="ms-f-owner-dropdown"></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">등록일 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Date</span></label>
+          <input class="form-input" id="f-date" type="date">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">불량 내용 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Description</span></label>
+        <textarea class="form-textarea" id="f-desc" placeholder="불량 현상, 위치, 발생 상황 등 상세 내용을 입력하세요."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">대책 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Countermeasure</span></label>
+        <textarea class="form-textarea" id="f-counter" placeholder="원인 분석 및 재발 방지 대책을 입력하세요."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">비고 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Remark</span></label>
+        <input class="form-input" id="f-remark" placeholder="기타 특이사항 입력">
+      </div>
+      <div class="form-group">
+        <label class="form-label">사진 첨부 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Photo (max 3)</span></label>
+        <input type="file" id="f-photos" accept="image/*" multiple style="display:none;" onchange="handlePhotos(this)">
+        <div class="photo-grid" id="photo-grid">
+          <div class="photo-add-btn" onclick="document.getElementById('f-photos').click()">
+            <span style="font-size:22px;">📷</span>
+            <span>사진 추가</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">취소 <span style="font-size:10px;opacity:.7;">Cancel</span></button>
+      <button class="btn btn-primary" onclick="submitDefect()">등록하기 <span style="font-size:10px;opacity:.85;">Submit</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ 불량 상세 모달 ════ -->
+<div class="modal-overlay" id="modal-detail">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">불량 상세 정보</div>
+      <button class="modal-close" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="modal-body" id="detail-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeDetail()">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ 불량 편집 모달 ════ -->
+<div class="modal-overlay" id="modal-edit">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">✏️ 불량 편집 <span style="font-size:12px;font-weight:400;color:var(--text-muted);">Edit Defect</span></div>
+        <div style="font-size:11px;color:var(--text-light);font-family:'DM Mono',monospace;margin-top:3px;" id="edit-id-label"></div>
+      </div>
+      <button class="modal-close" onclick="closeEditModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">차종 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Model</span></label>
+          <select class="form-select" id="e-carmodel">
+            <option value="">선택하세요</option>
+            <option>SU2i</option>
+            <option>SU2i EV</option>
+            <option>PS7i</option>
+            <option>BI3</option>
+            <option>AI3</option>
+            <option>BN7i</option>
+            <option>MS1</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">품번 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Part No.</span></label>
+          <input class="form-input" id="e-partno" placeholder="예: PA-10324">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">품목명 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Part Name</span> <span class="form-required">*</span></label>
+          <select class="form-select" id="e-item">
+            <option value="">선택하세요</option>
+            <option>QTR</option>
+            <option>RING S/ROOF</option>
+            <option>F/DR</option>
+            <option>F/DR HSG</option>
+            <option>REINF S/OTR</option>
+            <option>T/GATE</option>
+            <option>T/LID</option>
+            <option>BACK</option>
+            <option>DASH</option>
+            <option>MBR DR BELT</option>
+            <option>SIDE SILL</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row-3">
+        <div class="form-group">
+          <label class="form-label">불량 유형 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Defect Type</span></label>
+          <select class="form-select" id="e-type">
+            <option value="치수 불량">치수 불량 (Dimensional)</option>
+            <option value="외관 불량">외관 불량 (Appearance)</option>
+            <option value="용접 불량">용접 불량 (Welding)</option>
+            <option value="기타">기타 (Others)</option>
+            <option value="공정 누락">공정 누락 (Process Omission)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">발생처 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Occurrence</span></label>
+          <select class="form-select" id="e-sev">
+            <option value="수입검사">수입검사 (Incoming)</option>
+            <option value="프레스라인">프레스라인 (Press Line)</option>
+            <option value="조립라인">조립라인 (ASSY LINE)</option>
+            <option value="PDI">PDI</option>
+            <option value="HMI 1">HMI 1</option>
+            <option value="HMI 2">HMI 2</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">불량 수량 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Qty</span></label>
+          <input class="form-input" id="e-qty" type="number" min="1" placeholder="0">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">귀책처 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Responsibility</span></label>
+          <div class="ms-wrap" id="ms-e-owner-wrap">
+            <div class="ms-trigger" id="ms-e-owner-trigger" onclick="msToggle('e-owner')">
+              <span class="ms-placeholder">귀책처 선택 (복수 선택 가능)</span>
+            </div>
+            <div class="ms-dropdown" id="ms-e-owner-dropdown"></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">등록일 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Date</span></label>
+          <input class="form-input" id="e-date" type="date">
+        </div>
+      </div>
+      <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">불량 내용 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Description</span></label>
+        <textarea class="form-textarea" id="e-desc" placeholder="불량 현상, 위치, 발생 상황 등 상세 내용을 입력하세요."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">대책 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Countermeasure</span></label>
+        <textarea class="form-textarea" id="e-counter" placeholder="원인 분석 및 재발 방지 대책을 입력하세요."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">비고 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Remark</span></label>
+        <input class="form-input" id="e-remark" placeholder="기타 특이사항 입력">
+      </div>
+      <div class="form-group">
+        <label class="form-label">사진 첨부 <span style="font-size:10px;font-weight:400;color:var(--text-light);">Photo (max 3)</span></label>
+        <input type="file" id="e-photos" accept="image/*" multiple style="display:none;" onchange="handleEditPhotos(this)">
+        <div class="photo-grid" id="edit-photo-grid">
+          <div class="photo-add-btn" onclick="document.getElementById('e-photos').click()">
+            <span style="font-size:22px;">📷</span><span>사진 추가</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" style="justify-content:space-between;">
+      <button class="btn btn-danger btn-sm" onclick="deleteDefect()">🗑 삭제 <span style="font-size:10px;opacity:.8;">Delete</span></button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" onclick="closeEditModal()">취소 <span style="font-size:10px;opacity:.7;">Cancel</span></button>
+        <button class="btn btn-primary" onclick="saveEdit()">저장하기 <span style="font-size:10px;opacity:.85;">Save</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// 귀책처 멀티셀렉트 (Multi-select dropdown)
+// — const/let TDZ 방지: 스크립트 최상단 선언
+// ══════════════════════════════════════════════
+const OWNER_OPTIONS = [
+  { ko:'자재', en:'Material' },
+  { ko:'품질', en:'Quality' },
+  { ko:'생산', en:'Production' },
+  { ko:'물류', en:'Logistics' },
+  { ko:'보전', en:'Maintenance' },
+  { ko:'기타', en:'Others' },
+];
+const msState = { 'f-owner': new Set(), 'e-owner': new Set() };
+
+function msInit() {
+  ['f-owner','e-owner'].forEach(id => {
+    const dd = document.getElementById(`ms-${id}-dropdown`);
+    if (!dd) return;
+    dd.innerHTML = OWNER_OPTIONS.map(o => `
+      <div class="ms-option" data-val="${o.ko}" onclick="msToggleOption('${id}','${o.ko}',this)">
+        <div class="ms-chk">✓</div>
+        <span class="ms-opt-ko">${o.ko}</span>
+        <span class="ms-opt-en">${o.en}</span>
+      </div>`).join('');
+  });
+}
+function msToggle(id) {
+  const dd = document.getElementById(`ms-${id}-dropdown`);
+  const tr = document.getElementById(`ms-${id}-trigger`);
+  if (!dd) return;
+  const isOpen = dd.classList.contains('open');
+  document.querySelectorAll('.ms-dropdown.open').forEach(el => el.classList.remove('open'));
+  document.querySelectorAll('.ms-trigger.open').forEach(el => el.classList.remove('open'));
+  if (!isOpen) { dd.classList.add('open'); tr.classList.add('open'); }
+}
+function msToggleOption(id, val, el) {
+  const set = msState[id];
+  if (set.has(val)) { set.delete(val); el.classList.remove('selected'); }
+  else              { set.add(val);    el.classList.add('selected'); }
+  msRender(id);
+}
+function msRender(id) {
+  const tr = document.getElementById(`ms-${id}-trigger`);
+  if (!tr) return;
+  const vals = [...msState[id]];
+  if (vals.length === 0) {
+    tr.innerHTML = '<span class="ms-placeholder">귀책처 선택 (복수 선택 가능)</span>';
+  } else {
+    tr.innerHTML = vals.map(v =>
+      `<span class="ms-tag">${v}<span class="ms-remove" onclick="event.stopPropagation();msRemove('${id}','${v}')">×</span></span>`
+    ).join('');
+  }
+}
+function msRemove(id, val) {
+  msState[id].delete(val);
+  const opt = document.querySelector(`#ms-${id}-dropdown .ms-option[data-val="${val}"]`);
+  if (opt) opt.classList.remove('selected');
+  msRender(id);
+}
+function msGetValues(id) { return [...msState[id]]; }
+function msSetValues(id, vals) {
+  msState[id] = new Set(vals);
+  const dd = document.getElementById(`ms-${id}-dropdown`);
+  if (dd) {
+    dd.querySelectorAll('.ms-option').forEach(el => {
+      el.classList.toggle('selected', msState[id].has(el.dataset.val));
+    });
+  }
+  msRender(id);
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.ms-wrap')) {
+    document.querySelectorAll('.ms-dropdown.open').forEach(el => el.classList.remove('open'));
+    document.querySelectorAll('.ms-trigger.open').forEach(el => el.classList.remove('open'));
+  }
+});
+// msInit()은 INIT 섹션에서 호출
+
+// ══════════════════════════════════════════════════════
+//  Google Sheets 연동 설정
+//  Apps Script 배포 후 사이드바 하단 버튼으로 URL 입력
+// ══════════════════════════════════════════════════════
+let GAS_URL = localStorage.getItem('gas_url') || 'https://script.google.com/macros/s/AKfycbzwPeSmMkhJYaH-ryOKSd8cuJr6vQERmFzKmSbpV-XeAk56m6cpk9YFjh06xlQjo-qq/exec';
+
+// ══ DATA ══
+let defects = [
+  { carModel:'EV6',  partNo:'PA-10324', item:'볼트 M10',     serial:'SN-00101', type:'치수 불량', occurrence:'자사',   qty:'20', date:'2025-02-24', owner:'김철수', status:'open',   desc:'직경 공차 0.3mm 초과, 20ea 발생.', photos:[] },
+  { carModel:'K8',   partNo:'NB-20011', item:'너트 M8',      serial:'-',        type:'외관 불량', occurrence:'협력사', qty:'5',  date:'2025-02-23', owner:'이영희', status:'open',   desc:'표면 스크래치 5개소 발생', photos:[] },
+  { carModel:'EV6',  partNo:'PA-10088', item:'플레이트 A형', serial:'SN-00088', type:'치수 불량', occurrence:'자사',   qty:'12', date:'2025-02-22', owner:'박민준', status:'closed', desc:'홀 위치 편차 3mm, 전수 재작업 완료', photos:[] },
+  { carModel:'GV80', partNo:'GC-30221', item:'케이스 B형',   serial:'-',        type:'기능 불량', occurrence:'협력사', qty:'3',  date:'2025-02-21', owner:'최수진', status:'open',   desc:'잠금 장치 작동 불량, 원인 조사 중', photos:[] },
+  { carModel:'K5',   partNo:'NB-11044', item:'패킹 세트',    serial:'-',        type:'포장 불량', occurrence:'시장',   qty:'50', date:'2025-02-20', owner:'정도현', status:'closed', desc:'라벨 부착 오류, 재작업 완료', photos:[] },
+  { carModel:'K8',   partNo:'NB-20098', item:'샤프트 12Φ',  serial:'-',        type:'외관 불량', occurrence:'자사',   qty:'2',  date:'2025-02-19', owner:'김철수', status:'closed', desc:'도금 불량 3개소', photos:[] },
+  { carModel:'EV9',  partNo:'EV-40312', item:'브래킷 C형',   serial:'SN-00095', type:'치수 불량', occurrence:'협력사', qty:'8',  date:'2025-02-18', owner:'이영희', status:'open',   desc:'높이 치수 2mm 초과, CAPA 작성 중', photos:[] },
+];
+
+
+// ══ GOOGLE SHEETS 연동 ══════════════════════════════
+
+function stripPhotos(d) {
+  const {photos, _row, ...rest} = d;
+  // 사진 URL들을 | 구분해서 photos 컬럼에 저장
+  const photoUrls = Array.isArray(photos)
+    ? photos.map(p => p.url || p).filter(u => u && !u.startsWith('data:')).join('|')
+    : '';
+  // _row를 함께 전달해서 같은 품번 여러 행 구분
+  const result = { ...rest, photos: photoUrls };
+  if (_row) result._row = _row;
+  return result;
+}
+
+async function sheetLoad() {
+  if (!GAS_URL) return;
+  setLoadingBar(true);
+  try {
+    // 불량 데이터 + 생산수량 + 발생처별 생산수량 병렬 로딩
+    const [res, prodRes, occProdRes] = await Promise.all([
+      fetch(GAS_URL + '?t=' + Date.now()),
+      fetch(GAS_URL + '?action=production&t=' + Date.now()),
+      fetch(GAS_URL + '?action=occ_production&t=' + Date.now())
+    ]);
+    const json       = await res.json();
+    const prodJson   = await prodRes.json();
+    const occProdJson = await occProdRes.json();
+
+    if (!json.ok) throw new Error(json.error);
+    if (json.data.length > 0) {
+      // 기존 메모리 사진을 _row 기준으로 맵 생성 (행번호로 정확히 매칭)
+      const existingPhotoMap = {};
+      defects.forEach(x => { if (x._row) existingPhotoMap[x._row] = x.photos; });
+
+      defects = json.data.map(d => {
+        let photos = [];
+        if (d.photos && String(d.photos).trim()) {
+          // Sheets에 photos URL 있으면 복원
+          photos = String(d.photos).split('|').filter(Boolean).map(url => ({ url, thumb: url }));
+        } else if (d._row && existingPhotoMap[d._row]) {
+          // _row 기준으로 해당 행의 사진만 유지 (같은 품번 다른 행 사진 섞임 방지)
+          photos = existingPhotoMap[d._row];
+        }
+        return {
+          ...d,
+          photos,
+          counter: String(d.counter ?? '').trim(),
+          remark:  String(d.remark  ?? '').trim(),
+          desc:    String(d.desc    ?? '').trim(),
+          qty:     String(d.qty     ?? '').trim(),
+        };
+      });
+    }
+    if (prodJson.ok && prodJson.data) {
+      productionData = {};
+      prodJson.data.forEach(r => { if(r.ym) productionData[r.ym] = Number(r.qty)||0; });
+    }
+    if (occProdJson && occProdJson.ok && occProdJson.data) {
+      const OCC_KEYS = ['수입검사','프레스라인','조립라인','PDI','HMI 1','HMI 2'];
+      occProdData = {};
+      occProdJson.data.forEach(r => {
+        if (!r.ym) return;
+        occProdData[r.ym] = {};
+        OCC_KEYS.forEach(o => { occProdData[r.ym][o] = Number(r[o]||0); });
+      });
+    }
+    renderHomeDefects(); renderTable(); updateBadge(); renderDashboard();
+    showToast('success','Google Sheets 연동 완료', `불량 ${defects.length}건 불러왔습니다.`);
+  } catch(e) {
+    showToast('error','Sheets 연결 실패', e.message + '<br>URL을 다시 확인해 주세요.');
+  } finally { setLoadingBar(false); }
+}
+
+
+// 발생처별 생산수량 저장 → Sheets
+async function saveOccProdQty(ym) {
+  const OCC_KEYS = ['수입검사','프레스라인','조립라인','PDI','HMI 1','HMI 2'];
+  const occQty = {};
+  OCC_KEYS.forEach(occ => {
+    const id = 'occ-prod-' + occ.replace(/ /g,'-');
+    const el = document.getElementById(id);
+    occQty[occ] = el ? Number(el.value)||0 : 0;
+  });
+  if (!GAS_URL) { showToast('error','저장 실패','Apps Script URL을 먼저 설정해 주세요.'); return; }
+  try {
+    await fetch(GAS_URL, { method:'POST', body: JSON.stringify({ action:'occ_production_update', ym, occQty }) });
+    if (!occProdData[ym]) occProdData[ym] = {};
+    OCC_KEYS.forEach(o => { occProdData[ym][o] = occQty[o]; });
+    renderDashboard();
+    showToast('success','발생처별 생산수량 저장', ym + ' 저장 완료');
+  } catch(e) { showToast('error','저장 실패', e.message); }
+}
+
+// 생산수량 저장
+async function saveProdQty(ym, qty) {
+  if (!GAS_URL) return;
+  try {
+    await fetch(GAS_URL, { method:'POST', body: JSON.stringify({ action:'production_update', ym, qty: Number(qty) }) });
+    productionData[ym] = Number(qty);
+    renderDashboard();
+    showToast('success', '생산수량 저장', `${ym} → ${Number(qty).toLocaleString()}개`);
+  } catch(e) { showToast('error','저장 실패', e.message); }
+}
+
+async function sheetSync(showMsg=true) {
+  if (!GAS_URL) return;
+  try {
+    await fetch(GAS_URL, { method:'POST', body: JSON.stringify({ action:'sync', data: defects.map(stripPhotos) }) });
+    if (showMsg) showToast('success','Sheets 저장 완료', `${defects.length}건 동기화 완료`);
+  } catch(e) { showToast('error','저장 실패', e.message); }
+}
+
+async function sheetAdd(d) {
+  if (!GAS_URL) return;
+  try { await fetch(GAS_URL, { method:'POST', body: JSON.stringify({ action:'add', data: stripPhotos(d) }) }); } catch(e) {}
+}
+
+async function sheetUpdate(d) {
+  if (!GAS_URL) return;
+  try { await fetch(GAS_URL, { method:'POST', body: JSON.stringify({ action:'update', data: stripPhotos(d) }) }); } catch(e) {}
+}
+
+async function sheetDelete(partNo) {
+  if (!GAS_URL) return;
+  try {
+    const d = defects.find(x => x.partNo === partNo);
+    const payload = { action:'delete', partNo };
+    if (d && d._row) payload._row = d._row;
+    await fetch(GAS_URL, { method:'POST', body: JSON.stringify(payload) });
+  } catch(e) {}
+}
+
+function setLoadingBar(on) {
+  let bar = document.getElementById('loading-bar');
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id='loading-bar';
+    bar.style.cssText='position:fixed;top:0;left:0;right:0;height:3px;background:var(--accent);z-index:9999;animation:loadPulse 1s ease infinite;';
+    document.head.insertAdjacentHTML('beforeend','<style>@keyframes loadPulse{0%,100%{opacity:.4}50%{opacity:1}}</style>');
+    document.body.prepend(bar);
+  }
+  bar.style.display = on ? 'block' : 'none';
+}
+
+function openGasSetup() {
+  const url = prompt(
+    '🔗 Google Apps Script 배포 URL 입력\n\n' +
+    '📋 설정 방법:\n' +
+    '1. Google Sheets 열기\n' +
+    '2. 확장 프로그램 → Apps Script\n' +
+    '3. apps-script.gs 코드 붙여넣기 → 저장\n' +
+    '4. 배포 → 새 배포 → 웹 앱\n' +
+    '   실행 계정: 본인 / 액세스: 누구나\n' +
+    '5. 배포 URL 복사 후 여기에 붙여넣기',
+    GAS_URL
+  );
+  if (url === null) return;
+  GAS_URL = url.trim();
+  localStorage.setItem('gas_url', GAS_URL);
+  if (GAS_URL) { showToast('info','URL 저장됨','Sheets 연결 테스트 중…'); sheetLoad(); }
+  else { showToast('info','연동 해제','Google Sheets 연동이 해제되었습니다.'); }
+  updateSheetBtn();
+}
+
+function updateSheetBtn() {
+  const btn = document.getElementById('sheet-btn');
+  if (!btn) return;
+  if (GAS_URL) {
+    btn.textContent = '🟢 Sheets 연동됨';
+    btn.style.color = 'var(--success)';
+  } else {
+    btn.textContent = '🔗 Sheets 연동 설정<br><span style="font-size:10px;font-weight:400;opacity:.6;">Connection Setup</span>';
+    btn.style.color = 'var(--sidebar-text)';
+  }
+}
+
+// ══ STATE ══
+let searchQ='', filterSev='', filterStatus='';
+// 불량 관리 월 필터 (기본: 당월)
+const _now = new Date();
+let filterMonth  = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}`;
+let filterDateFrom = '';  // 시작일 (YYYY-MM-DD)
+let filterDateTo   = '';  // 종료일 (YYYY-MM-DD)
+
+// 생산수량 데이터 { 'YYYY-MM': qty }
+let productionData = {};
+let occProdData = {};
+let uploadedPhotos=[];
+
+// ══ NAVIGATION ══
+const pageInfo = {
+  home:    { title:'📊 품질 현황',        sub:(() => { const n=new Date(); return `품질 관리 · ${n.getFullYear()}년 ${n.getMonth()+1}월`; })() },
+  defects: { title:'🔴 불량 관리',       sub:'등록 및 추적 · Defect Management' },
+  report:  { title:'📄 월간 보고서',     sub:(() => { const n=new Date(); return `${n.getFullYear()}년 ${n.getMonth()+1}월 품질 실적`; })() },
+};
+
+function goPage(name, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if(el) el.classList.add('active');
+  else { const nav = document.querySelector(`[onclick*="'${name}'"]`); if(nav) nav.classList.add('active'); }
+  document.getElementById('page-title').textContent = pageInfo[name].title;
+  document.getElementById('page-sub').textContent   = pageInfo[name].sub;
+  if(name==='defects') { updateFilterMonthLabel(); renderTable(); }
+  if(name==='home')    renderDashboard();
+  if(name==='report')  renderReport();
+  setMobTab(name);
+}
+
+// ══ HOME ══
+// ══ 대시보드 렌더링 (불량 데이터 실시간 연동) ══
+function renderDashboard() {
+  const now    = new Date();
+  const thisYM = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const label  = `${now.getFullYear()}년 ${now.getMonth()+1}월`;
+
+  // 당월 데이터
+  const monthData = defects.filter(d => (d.date||'').startsWith(thisYM));
+
+  // 전월 비교
+  const prevD  = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const prevYM = `${prevD.getFullYear()}-${String(prevD.getMonth()+1).padStart(2,'0')}`;
+  const prevMonth = defects.filter(d => (d.date||'').startsWith(prevYM));
+  const diff   = monthData.length - prevMonth.length;
+
+  // 고객사 불량 (HMI 1 + HMI 2)
+  const customerDefects = monthData.filter(d => d.occurrence === 'HMI 1' || d.occurrence === 'HMI 2');
+
+  // GQMS 등록 건수 — 비고(remark)에 'GQMS' 포함된 건
+  const gqmsDefects = monthData.filter(d => (d.remark||'').toUpperCase().includes('GQMS'));
+  const gqmsQty     = gqmsDefects.reduce((s,d)=>s+Number(d.qty||0),0);
+
+  // 생산수량
+  const prodQty = productionData[thisYM] || 0;
+
+  // GQMS PPM = GQMS 불량수량 합계 ÷ 생산수량 × 1,000,000
+  const gqmsPPM = prodQty > 0 ? Math.round(gqmsQty / prodQty * 1000000) : null;
+
+  // KPI 렌더링
+  document.getElementById('kpi-total').textContent        = monthData.length + '건';
+  document.getElementById('kpi-total-sub').textContent    = `${label} · MoM ${diff>0?'▲+'+diff:diff<0?'▼'+diff:'─'} 건`;
+  document.getElementById('kpi-closed-rate').textContent  = customerDefects.length + '건';
+  document.getElementById('kpi-closed-sub').textContent   = `HMI 1: ${monthData.filter(d=>d.occurrence==='HMI 1').length}건 · HMI 2: ${monthData.filter(d=>d.occurrence==='HMI 2').length}건`;
+  document.getElementById('kpi-thismonth').textContent    = gqmsDefects.length + '건';
+  document.getElementById('kpi-thismonth-sub').textContent = `비고 GQMS 기재 ${gqmsDefects.length}건 / 불량수량 ${gqmsQty}개`;
+  document.getElementById('kpi-open').textContent         = gqmsPPM === null ? '-' : gqmsPPM.toLocaleString();
+  document.getElementById('kpi-open-sub').textContent     = prodQty > 0 ? `GQMS 불량수량 ${gqmsQty}개 ÷ 생산 ${prodQty.toLocaleString()}개` : '생산수량 미입력 (No Prod. Data)';
+
+  // 생산수량 입력 UI (대시보드 상단)
+  const prodWrap = document.getElementById('prod-qty-wrap');
+  if (prodWrap) {
+
+
+    prodWrap.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span style="font-size:13px;color:var(--text-muted);font-weight:600;">📦 ${label} 전체 생산수량</span>
+        <input type="number" id="prod-qty-input" value="${prodQty||''}" placeholder="생산수량 입력"
+          style="width:140px;padding:6px 10px;border:1px solid var(--border-dark);border-radius:8px;font-size:13px;font-family:'DM Mono',monospace;background:var(--surface);">
+        <button class="btn btn-primary btn-sm" onclick="saveProdQtyFromInput()">저장 <span style="font-size:9px;opacity:.85;">Save</span></button>
+        ${prodQty > 0 ? `<span style="font-size:12px;color:var(--success);font-weight:600;">✅ ${prodQty.toLocaleString()}개</span>` : `<span style="font-size:12px;color:var(--danger);">⚠️ 미입력 시 PPM 계산 불가</span>`}
+      </div>`;
+  }
+
+  // 공통 색상
+  const typeColors  = ['#e02424','#d97706','#7c3aed','#1a56db','#057a55','#0891b2','#9aa5b4'];
+  const occColorMap = {'수입검사':'#1a56db','프레스라인':'#d97706','조립라인':'#7c3aed','PDI':'#057a55','HMI 1':'#e02424','HMI 2':'#0891b2','기타':'#9aa5b4'};
+  const ownerColors = ['#057a55','#e02424','#d97706','#1a56db','#7c3aed','#0891b2','#9aa5b4'];
+  const modelColors = ['#1a56db','#7c3aed','#0891b2','#d97706','#057a55','#e02424','#9aa5b4'];
+  const itemColors  = ['#0891b2','#7c3aed','#d97706','#057a55','#e02424','#1a56db','#9aa5b4'];
+
+  function groupBy(arr, key) {
+    const map = {};
+    arr.forEach(d => {
+      const raw = d[key]||'-';
+      // owner(귀책처)는 복수값(쉼표 구분) 분산 집계
+      if (key === 'owner' && raw.includes(',')) {
+        raw.split(',').forEach(v => { const k=v.trim()||'-'; map[k]=(map[k]||0)+1; });
+      } else {
+        map[raw] = (map[raw]||0)+1;
+      }
+    });
+    return Object.entries(map).sort((a,b) => b[1]-a[1]);
+  }
+
+  function renderBar(elId, arr, colorFn) {
+    const max = arr[0]?.[1] || 1;
+    document.getElementById(elId).innerHTML = arr.length
+      ? arr.map(([k,cnt],i) => `
+        <div class="bar-row">
+          <div class="bar-lbl">${k}${KO_EN[k]?'<span style="font-size:10px;color:var(--text-muted);font-weight:400;"> '+KO_EN[k]+'</span>':''}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${Math.round(cnt/max*100)}%;background:${colorFn(k,i)};transition:width 0.6s ease;"></div></div>
+          <div class="bar-num">${cnt}건</div>
+        </div>`).join('')
+      : '<div style="color:var(--text-muted);font-size:13px;padding:24px 0;text-align:center;">당월 데이터 없음 (No Data)</div>';
+  }
+
+
+  // 발생처별 바 차트 — 건수 오른편에 누적수량 · PPM 추가
+  function renderOccBar(elId, arr, colorFn, ym) {
+    const curOcc = occProdData[ym] || {};
+    const max = arr[0]?.[1] || 1;
+    document.getElementById(elId).innerHTML = arr.length
+      ? arr.map(([k, cnt], i) => {
+          const occProd = Number(curOcc[k] || 0);
+          const qty     = monthData.filter(d => d.occurrence === k).reduce((s,d)=>s+Number(d.qty||0),0);
+          const ppm     = occProd > 0 ? Math.round(qty / occProd * 1000000) : null;
+          const ppmTxt  = ppm !== null
+            ? `<span style="font-size:11px;font-family:'DM Mono',monospace;color:${colorFn(k,i)};font-weight:700;margin-left:6px;">${qty}개 · ${ppm.toLocaleString()} PPM</span>`
+            : `<span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text-light);margin-left:6px;">${qty}개</span>`;
+          return `
+            <div class="bar-row">
+              <div class="bar-lbl">${k}${KO_EN[k]?'<span style="font-size:10px;color:var(--text-muted);font-weight:400;"> '+KO_EN[k]+'</span>':''}</div>
+              <div class="bar-track"><div class="bar-fill" style="width:${Math.round(cnt/max*100)}%;background:${colorFn(k,i)};transition:width 0.6s ease;"></div></div>
+              <div style="display:flex;align-items:center;white-space:nowrap;">
+                <span class="bar-num">${cnt}건</span>${ppmTxt}
+              </div>
+            </div>`;
+        }).join('')
+      : '<div style="color:var(--text-muted);font-size:13px;padding:24px 0;text-align:center;">당월 데이터 없음 (No Data)</div>';
+  }
+
+  function renderDonut(elId, arr, colors) {
+    const tot = arr.reduce((s,[,v])=>s+v,0);
+    if (!arr.length) { document.getElementById(elId).innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:40px 0;text-align:center;">당월 데이터 없음 (No Data)</div>'; return; }
+    const cx=100,cy=100,R=80,r=50;
+    let startAngle = -Math.PI/2, slices = '';
+    arr.forEach(([type,cnt],i) => {
+      const angle = (cnt/tot)*2*Math.PI;
+      const x1=cx+R*Math.cos(startAngle), y1=cy+R*Math.sin(startAngle);
+      const x2=cx+R*Math.cos(startAngle+angle), y2=cy+R*Math.sin(startAngle+angle);
+      const ix1=cx+r*Math.cos(startAngle), iy1=cy+r*Math.sin(startAngle);
+      const ix2=cx+r*Math.cos(startAngle+angle), iy2=cy+r*Math.sin(startAngle+angle);
+      const large = angle > Math.PI ? 1 : 0;
+      const color = colors[i%colors.length];
+      const midA  = startAngle + angle/2;
+      const lx=cx+(R+14)*Math.cos(midA), ly=cy+(R+14)*Math.sin(midA);
+      const pct = Math.round(cnt/tot*100);
+      slices += `<path d="M${x1},${y1} A${R},${R} 0 ${large},1 ${x2},${y2} L${ix2},${iy2} A${r},${r} 0 ${large},0 ${ix1},${iy1} Z" fill="${color}" opacity="0.9"/>`;
+      if (pct >= 5) slices += `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" fill="${color}" font-size="10" font-weight="700" font-family="DM Mono">${pct}%</text>`;
+      startAngle += angle;
+    });
+    slices += `<text x="${cx}" y="${cy-7}" text-anchor="middle" fill="var(--text)" font-size="10" font-family="Noto Sans KR">당월(M)</text>`;
+    slices += `<text x="${cx}" y="${cy+10}" text-anchor="middle" fill="var(--text)" font-size="18" font-weight="700" font-family="DM Mono">${tot}</text>`;
+    slices += `<text x="${cx}" y="${cy+26}" text-anchor="middle" fill="var(--text-muted)" font-size="10" font-family="Noto Sans KR">건</text>`;
+    const legend = arr.map(([type,cnt],i)=>`
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;margin-bottom:6px;">
+        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${colors[i%colors.length]};flex-shrink:0;"></span>
+        <span style="flex:1;color:var(--text);">${type}</span>
+        <span style="font-family:'DM Mono',monospace;color:var(--text-muted);">${cnt}건</span>
+      </div>`).join('');
+    document.getElementById(elId).innerHTML = `
+      <div style="display:flex;align-items:center;gap:16px;">
+        <svg viewBox="0 0 200 200" width="160" height="160" style="flex-shrink:0;">${slices}</svg>
+        <div style="flex:1;">${legend}</div>
+      </div>`;
+  }
+
+  // 차트 렌더링 (모두 당월 기준)
+  renderDonut('chart-type', groupBy(monthData,'type'), typeColors);
+  renderBar('chart-model',      groupBy(monthData,'carModel'),   (k,i)=>modelColors[i%modelColors.length]);
+  renderOccBar('chart-occurrence', groupBy(monthData,'occurrence'), (k)=>occColorMap[k]||'#9aa5b4', thisYM);
+  renderBar('chart-owner',      groupBy(monthData,'owner'),      (k,i)=>ownerColors[i%ownerColors.length]);
+  renderBar('chart-item',       groupBy(monthData,'item'),       (k,i)=>itemColors[i%itemColors.length]);
+
+  // card-sub 월 표시 업데이트
+  ['chart-model','chart-occurrence','chart-owner','chart-item'].forEach(id => {
+    const card = document.getElementById(id).closest('.card');
+    if (card) { const sub = card.querySelector('.card-sub'); if(sub) sub.textContent = label + ' 기준'; }
+  });
+
+  // 주별 추이 (당월)
+  renderTrendSVG(buildWeeks(now));
+  renderOccurrenceTrend(now);
+}
+
+
+// ── 한글↔영문 번역 맵 ──
+const KO_EN = {
+  // 불량 유형
+  '치수 불량': 'Dimensional', '외관 불량': 'Appearance',
+  '용접 불량': 'Welding',     '기타': 'Others', '공정 누락': 'Process Omission',
+  // 발생처
+  '수입검사': 'Incoming',   '프레스라인': 'Press Line',
+  '조립라인': 'ASSY LINE',   'PDI': 'PDI',
+  'HMI 1': 'HMI 1',        'HMI 2': 'HMI 2',
+  // 귀책처
+  '자재': 'Material',  '품질': 'Quality',
+  '생산': 'Production','물류': 'Logistics','보전': 'Maintenance','기타': 'Others',
+  // 상태
+  'open': 'Open', 'closed': 'Done',
+};
+function biLang(val) {
+  if (!val || val === '-') return val || '-';
+  // 복수 귀책처 처리 (쉼표 구분)
+  if (val.includes(',')) {
+    return val.split(',').map(v => {
+      const en = KO_EN[v.trim()];
+      return en ? `${v.trim()}<span style="font-size:10px;color:var(--text-muted);font-weight:400;"> ${en}</span>` : v.trim();
+    }).join(', ');
+  }
+  const en = KO_EN[val];
+  return en ? `${val}<br><span style="font-size:10px;color:var(--text-muted);font-weight:400;">${en}</span>` : val;
+}
+function statusBiLang(status) {
+  return status === 'open'
+    ? '미처리<br><span style="font-size:10px;font-weight:400;">Open</span>'
+    : '완료<br><span style="font-size:10px;font-weight:400;">Done</span>';
+}
+
+// ── 당월 주 목록 생성 (월요일 기준, 해당 월에 속하는 주만)
+function buildWeeks(now) {
+  const year  = now.getFullYear();
+  const month = now.getMonth(); // 0-based
+  const firstDay = new Date(year, month, 1);
+  const lastDay  = new Date(year, month + 1, 0);
+
+  const dow = firstDay.getDay(); // 0=일, 1=월 ...
+  const firstMon = new Date(firstDay);
+  firstMon.setDate(firstDay.getDate() - (dow === 0 ? 6 : dow - 1));
+
+  const weeks = [];
+  let mon = new Date(firstMon);
+
+  while (mon <= lastDay) {
+    const sun = new Date(mon);
+    sun.setDate(sun.getDate() + 6);
+
+    const weekStart = mon < firstDay ? firstDay : mon;
+    const weekEnd   = sun > lastDay  ? lastDay  : sun;
+
+    if (weekStart <= lastDay && weekEnd >= firstDay) {
+      const monStr = weekStart.toISOString().slice(0, 10);
+      const sunStr = weekEnd.toISOString().slice(0, 10);
+      const cnt = defects.filter(d => {
+        const dt = (d.date || '').slice(0, 10);
+        return dt >= monStr && dt <= sunStr;
+      }).length;
+      weeks.push({ monStr, sunStr, cnt });
+    }
+    mon.setDate(mon.getDate() + 7);
+  }
+
+  // 1일짜리 짧은 첫 주(일요일 하루)가 생기면 다음 주와 병합
+  if (weeks.length >= 2) {
+    const d1 = new Date(weeks[0].monStr);
+    const d2 = new Date(weeks[0].sunStr);
+    const days = Math.round((d2 - d1) / 86400000) + 1;
+    if (days <= 1) {
+      weeks[1].monStr = weeks[0].monStr;
+      weeks[1].cnt   += weeks[0].cnt;
+      weeks.splice(0, 1);
+    }
+  }
+
+  // 주 번호 레이블 부여
+  return weeks.map((w, i) => ({ ...w, label: `${i+1}주` }));
+}
+
+function renderTrendSVG(weeks) {
+  const svg = document.getElementById('trend-svg');
+  if (!svg) return;
+  const n = weeks.length;
+  if (n < 2) {
+    svg.innerHTML = `<text x="50%" y="50%" text-anchor="middle" fill="#9aa5b4" font-size="13" font-family="Noto Sans KR" dominant-baseline="middle">데이터 없음</text>`;
+    return;
+  }
+  const W = 870, H = 100, padT = 14, padB = 20;
+  const maxVal = Math.max(...weeks.map(w => w.cnt), 1);
+  const xs     = weeks.map((_, i) => Math.round(i / (n - 1) * W));
+  const ys     = weeks.map(w => Math.round(padT + (1 - w.cnt / maxVal) * (H - padT - padB)));
+  const pts    = xs.map((x, i) => `${x},${ys[i]}`).join(' ');
+  const fill   = `${xs[0]},${H} ${pts} ${xs[n-1]},${H}`;
+
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="tg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#1a56db" stop-opacity="0.15"/>
+        <stop offset="100%" stop-color="#1a56db" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <line x1="0" y1="${Math.round(H*0.3)}"  x2="${W}" y2="${Math.round(H*0.3)}"  stroke="#e4e9f0" stroke-dasharray="4"/>
+    <line x1="0" y1="${Math.round(H*0.62)}" x2="${W}" y2="${Math.round(H*0.62)}" stroke="#e4e9f0" stroke-dasharray="4"/>
+    <polygon points="${fill}" fill="url(#tg)"/>
+    <polyline points="${pts}" fill="none" stroke="#1a56db" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    ${xs.map((x, i) => `
+      <circle cx="${x}" cy="${ys[i]}" r="${i===n-1?5:3.5}" fill="#1a56db" ${i===n-1?'stroke="#fff" stroke-width="2"':''}/>
+      <text x="${x}" y="${ys[i]-8}" fill="#1a56db" font-size="9" font-weight="700"
+        text-anchor="${i===0?'start':i===n-1?'end':'middle'}" font-family="DM Mono">${weeks[i].cnt}</text>
+      <text x="${x}" y="${H}" fill="${i===n-1?'#1a56db':'#9aa5b4'}" font-size="10"
+        text-anchor="${i===0?'start':i===n-1?'end':'middle'}" font-family="DM Mono">${weeks[i].label}</text>
+    `).join('')}`;
+}
+
+function renderOccurrenceTrend(now) {
+  const wrap = document.getElementById('occ-charts-wrap');
+  if (!wrap) return;
+
+  const occColorMap = {'수입검사':'#1a56db','프레스라인':'#d97706','조립라인':'#7c3aed','PDI':'#057a55','HMI 1':'#e02424','HMI 2':'#0891b2','기타':'#9aa5b4'};
+  const ALL_OCC = ['수입검사','프레스라인','조립라인','PDI','HMI 1','HMI 2'];
+
+  // 당월 주 목록
+  const weeks = buildWeeks(now);
+  const n = weeks.length;
+  const W = 440, H = 110, padT = 20, padB = 22, padL = 5, padR = 15;
+
+  // 당월 발생처별 생산수량
+  const nowYM = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const curOccProd = (occProdData[nowYM] || {});
+
+  wrap.innerHTML = ALL_OCC.map(occ => {
+    const color   = occColorMap[occ] || '#9aa5b4';
+    const occProd = Number(curOccProd[occ] || 0); // 발생처별 생산수량
+
+    // 주차별 건수 및 불량수량(qty)
+    const weekData = weeks.map(w => {
+      const filtered = defects.filter(d => {
+        const dt = (d.date || '').slice(0, 10);
+        return dt >= w.monStr && dt <= w.sunStr && d.occurrence === occ;
+      });
+      return {
+        cnt: filtered.length,
+        qty: filtered.reduce((s, d) => s + Number(d.qty || 0), 0)
+      };
+    });
+
+    const total    = weekData.reduce((s, w) => s + w.cnt, 0);
+    const totalQty = weekData.reduce((s, w) => s + w.qty, 0);
+    const totalPPM = occProd > 0 ? Math.round(totalQty / occProd * 1000000) : null;
+
+    const counts = weekData.map(w => w.cnt);
+    const maxVal = Math.max(...counts, 1);
+    const xs     = n < 2
+      ? counts.map((_, i) => Math.round(padL + i / Math.max(n-1,1) * (W - padL - padR)))
+      : counts.map((_, i) => Math.round(padL + i / (n-1) * (W - padL - padR)));
+    const ys     = counts.map(cnt => Math.round(padT + (1 - cnt / maxVal) * (H - padT - padB)));
+    const pts    = xs.map((x, i) => `${x},${ys[i]}`).join(' ');
+    const fill   = `${xs[0]},${H-padB} ${pts} ${xs[n-1]},${H-padB}`;
+
+    const gridLines = [0.3, 0.65].map(r =>
+      `<line x1="${padL}" y1="${Math.round(padT + r*(H-padT-padB))}" x2="${W-padR}" y2="${Math.round(padT + r*(H-padT-padB))}" stroke="#e4e9f0" stroke-dasharray="3"/>`
+    ).join('');
+
+    const dots = xs.map((x, i) => {
+      const wPPM = occProd > 0 && weekData[i].qty > 0
+        ? Math.round(weekData[i].qty / occProd * 1000000)
+        : null;
+      const ppmTxt = wPPM !== null ? ` (${wPPM.toLocaleString()})` : '';
+      // 건수 + (PPM)을 한 줄로 표시
+      const label = counts[i] > 0 ? `${counts[i]}${ppmTxt}` : '0';
+      return `
+        <circle cx="${x}" cy="${ys[i]}" r="3.5" fill="${color}" stroke="#fff" stroke-width="1.5"/>
+        <text x="${x}" y="${ys[i]-9}" fill="${color}" font-size="9" font-weight="700"
+          text-anchor="${i===0?'start':i===n-1?'end':'middle'}" font-family="DM Mono">${label}</text>
+        <text x="${x}" y="${H}" fill="${i===n-1?color:'#9aa5b4'}" font-size="10"
+          text-anchor="${i===0?'start':i===n-1?'end':'middle'}" font-family="DM Mono">${weeks[i].label}</text>
+      `;
+    }).join('');
+
+    // 발생처 옆: 누적수량 · 누적PPM
+    const qtyBadge = `<span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text-muted);margin-left:8px;">누적 ${totalQty}개</span>`;
+    const ppmBadge = totalPPM !== null
+      ? `<span style="font-size:11px;font-family:'DM Mono',monospace;color:${color};font-weight:700;margin-left:4px;">${totalPPM.toLocaleString()} PPM</span>`
+      : `<span style="font-size:10px;color:var(--text-light);margin-left:4px;">PPM 미산출</span>`;
+
+    return `
+      <div style="background:var(--bg);border-radius:10px;padding:14px 16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:4px;">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${color};flex-shrink:0;"></span>
+            <span style="font-size:13px;font-weight:700;color:var(--text);">${occ}${KO_EN[occ]?'<span style="font-size:10px;font-weight:400;color:var(--text-muted);margin-left:4px;">'+KO_EN[occ]+'</span>':''}</span>
+            ${qtyBadge}${ppmBadge}
+          </div>
+          <span style="font-size:12px;font-family:'DM Mono',monospace;color:${total>0?color:'var(--text-muted)'};font-weight:700;">당월(M) ${total}건</span>
+        </div>
+        <svg width="100%" height="${H}" viewBox="-5 0 ${W+10} ${H}" preserveAspectRatio="none">
+          ${gridLines}
+          <polygon points="${fill}" fill="${color}" opacity="${total>0?'0.08':'0.03'}"/>
+          <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="${total>0?'1':'0.3'}"/>
+          ${dots}
+        </svg>
+      </div>`;
+  }).join('');
+}
+
+// ══ 월간 보고서 렌더링 ══
+let reportYear  = new Date().getFullYear();
+let reportMonth = new Date().getMonth() + 1;
+
+function changeReportMonth(dir) {
+  reportMonth += dir;
+  if (reportMonth > 12) { reportMonth = 1;  reportYear++; }
+  if (reportMonth < 1)  { reportMonth = 12; reportYear--; }
+  renderReport();
+}
+
+function renderReport() {
+  const ym     = `${reportYear}-${String(reportMonth).padStart(2,'0')}`;
+  const prevD  = new Date(reportYear, reportMonth - 2, 1);
+  const prevYM = `${prevD.getFullYear()}-${String(prevD.getMonth()+1).padStart(2,'0')}`;
+  const label  = `${reportYear}년 ${reportMonth}월`;
+
+  const curr   = defects.filter(d => (d.date||'').startsWith(ym));
+  const prev   = defects.filter(d => (d.date||'').startsWith(prevYM));
+  // 고객사 불량 (HMI 1 + HMI 2)
+  const customerDef = curr.filter(d => d.occurrence === 'HMI 1' || d.occurrence === 'HMI 2');
+  const diff   = curr.length - prev.length;
+
+  document.getElementById('report-month-label').textContent = label;
+
+  // KPI
+  document.getElementById('r-total').textContent      = curr.length + '건';
+  document.getElementById('r-total-sub').textContent  = `전체 누계 ${defects.length}건 중 (Total)`;
+  const rProdQty = productionData[ym] || 0;
+  const rCustPPM = rProdQty > 0 ? Math.round(customerDef.reduce((s,d)=>s+Number(d.qty||1),0) / rProdQty * 1000000) : null;
+  document.getElementById('r-closed-rate').textContent = customerDef.length + '건';
+  document.getElementById('r-closed-sub').textContent  = `HMI 1: ${curr.filter(d=>d.occurrence==='HMI 1').length}건 · HMI 2: ${curr.filter(d=>d.occurrence==='HMI 2').length}건`;
+  document.getElementById('r-open').textContent        = rCustPPM === null ? '-' : rCustPPM.toLocaleString();
+  document.getElementById('r-open-sub').textContent    = rProdQty > 0 ? `고객사 불량 ${customerDef.reduce((s,d)=>s+Number(d.qty||1),0)}개 기준` : '생산수량 미입력';
+  const diffEl = document.getElementById('r-diff');
+  diffEl.textContent = (diff > 0 ? '▲ +' : diff < 0 ? '▼ ' : '─ ') + diff + '건';
+  diffEl.style.color = diff > 0 ? 'var(--danger)' : diff < 0 ? 'var(--success)' : 'var(--text-muted)';
+  document.getElementById('r-diff-sub').textContent = `전월(${prevD.getMonth()+1}월) ${prev.length}건 대비 (vs Prev)`;
+
+  // 색상
+  const typeColors  = ['#e02424','#d97706','#7c3aed','#1a56db','#057a55','#0891b2','#9aa5b4'];
+  const occColorMap = {'수입검사':'#1a56db','프레스라인':'#d97706','조립라인':'#7c3aed','PDI':'#057a55','HMI 1':'#e02424','HMI 2':'#0891b2','기타':'#9aa5b4'};
+  const ownerColors = ['#057a55','#e02424','#d97706','#1a56db','#7c3aed','#0891b2','#9aa5b4'];
+  const modelColors = ['#1a56db','#7c3aed','#0891b2','#d97706','#057a55','#e02424','#9aa5b4'];
+
+  function groupBy(arr, key) {
+    const map = {};
+    arr.forEach(d => {
+      const raw = d[key]||'-';
+      if (key === 'owner' && raw.includes(',')) {
+        raw.split(',').forEach(v => { const k=v.trim()||'-'; map[k]=(map[k]||0)+1; });
+      } else {
+        map[raw] = (map[raw]||0)+1;
+      }
+    });
+    return Object.entries(map).sort((a,b) => b[1]-a[1]);
+  }
+
+  function renderBar(elId, subId, arr, colorFn, subText) {
+    if(subId) document.getElementById(subId).textContent = subText || label + ' 기준 (Base)';
+    const max = arr[0]?.[1] || 1;
+    document.getElementById(elId).innerHTML = arr.length
+      ? arr.map(([k,cnt],i) => `
+        <div class="bar-row">
+          <div class="bar-lbl">${k}${KO_EN[k]?'<span style="font-size:10px;color:var(--text-muted);font-weight:400;"> '+KO_EN[k]+'</span>':''}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${Math.round(cnt/max*100)}%;background:${colorFn(k,i)};transition:width 0.6s ease;"></div></div>
+          <div class="bar-num">${cnt}건</div>
+        </div>`).join('')
+      : '<div style="color:var(--text-muted);font-size:13px;padding:24px 0;text-align:center;">당월 데이터 없음 (No Data)</div>';
+  }
+
+  // 불량 유형 도넛 차트
+  const typeArr = groupBy(curr, 'type');
+  const typeTot = typeArr.reduce((s,[,v])=>s+v, 0);
+  document.getElementById('r-type-sub').textContent = label + ' 기준 (Base)';
+  if (!typeArr.length) {
+    document.getElementById('r-chart-type').innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:40px 0;text-align:center;">당월 데이터 없음 (No Data)</div>';
+  } else {
+    const cx=100,cy=100,R=80,r=50;
+    let sa=-Math.PI/2, slices='';
+    typeArr.forEach(([type,cnt],i) => {
+      const angle=(cnt/typeTot)*2*Math.PI;
+      const x1=cx+R*Math.cos(sa),y1=cy+R*Math.sin(sa);
+      const x2=cx+R*Math.cos(sa+angle),y2=cy+R*Math.sin(sa+angle);
+      const ix1=cx+r*Math.cos(sa),iy1=cy+r*Math.sin(sa);
+      const ix2=cx+r*Math.cos(sa+angle),iy2=cy+r*Math.sin(sa+angle);
+      const lg=angle>Math.PI?1:0, col=typeColors[i%typeColors.length];
+      const midA=sa+angle/2, lx=cx+(R+14)*Math.cos(midA), ly=cy+(R+14)*Math.sin(midA);
+      const pct=Math.round(cnt/typeTot*100);
+      slices+=`<path d="M${x1},${y1} A${R},${R} 0 ${lg},1 ${x2},${y2} L${ix2},${iy2} A${r},${r} 0 ${lg},0 ${ix1},${iy1} Z" fill="${col}" opacity="0.9"/>`;
+      if(pct>=5) slices+=`<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" fill="${col}" font-size="10" font-weight="700" font-family="DM Mono">${pct}%</text>`;
+      sa+=angle;
+    });
+    slices+=`<text x="${cx}" y="${cy-7}" text-anchor="middle" fill="var(--text)" font-size="10" font-family="Noto Sans KR">당월(M)</text>`;
+    slices+=`<text x="${cx}" y="${cy+10}" text-anchor="middle" fill="var(--text)" font-size="18" font-weight="700" font-family="DM Mono">${typeTot}</text>`;
+    slices+=`<text x="${cx}" y="${cy+26}" text-anchor="middle" fill="var(--text-muted)" font-size="10" font-family="Noto Sans KR">건</text>`;
+    const legend=typeArr.map(([t,cnt],i)=>`
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;margin-bottom:6px;">
+        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${typeColors[i%typeColors.length]};flex-shrink:0;"></span>
+        <span style="flex:1;color:var(--text);">${t}${KO_EN[t]?'<span style="font-size:10px;color:var(--text-muted);"> '+KO_EN[t]+'</span>':''}</span>
+        <span style="font-family:'DM Mono',monospace;color:var(--text-muted);">${cnt}건</span>
+      </div>`).join('');
+    document.getElementById('r-chart-type').innerHTML=`
+      <div style="display:flex;align-items:center;gap:16px;">
+        <svg viewBox="0 0 200 200" width="160" height="160" style="flex-shrink:0;">${slices}</svg>
+        <div style="flex:1;">${legend}</div>
+      </div>`;
+  }
+
+  renderBar('r-chart-occ',   'r-occ-sub',   groupBy(curr,'occurrence'), (k)   => occColorMap[k]||'#9aa5b4');
+  renderBar('r-chart-model', 'r-model-sub', groupBy(curr,'carModel'),   (k,i) => modelColors[i%modelColors.length]);
+  renderBar('r-chart-owner', 'r-owner-sub', groupBy(curr,'owner'),      (k,i) => ownerColors[i%ownerColors.length]);
+
+  // 해당 연도 12개월 추이 SVG
+  const yearMonths = [];
+  for (let m=1; m<=12; m++) {
+    const ymStr = `${reportYear}-${String(m).padStart(2,'0')}`;
+    yearMonths.push({ label:`${m}월`, ym:ymStr, cnt: defects.filter(d=>(d.date||'').startsWith(ymStr)).length });
+  }
+  document.getElementById('r-trend-sub').textContent = `${reportYear}년 월별 현황 (Monthly)`;
+
+  const rSvg = document.getElementById('r-trend-svg');
+  if (rSvg) {
+    const W=870, H=100, padT=14, padB=20;
+    const maxVal = Math.max(...yearMonths.map(m=>m.cnt), 1);
+    const n=yearMonths.length;
+    const xs = yearMonths.map((_,i) => Math.round(i/(n-1)*W));
+    const ys = yearMonths.map(m => Math.round(padT + (1-m.cnt/maxVal)*(H-padT-padB)));
+    const pts = xs.map((x,i)=>`${x},${ys[i]}`).join(' ');
+    const fill = `${xs[0]},${H} ${pts} ${xs[n-1]},${H}`;
+    rSvg.innerHTML = `
+      <defs><linearGradient id="rtg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#1a56db" stop-opacity="0.15"/>
+        <stop offset="100%" stop-color="#1a56db" stop-opacity="0"/>
+      </linearGradient></defs>
+      <line x1="0" y1="${Math.round(H*0.3)}" x2="${W}" y2="${Math.round(H*0.3)}" stroke="#e4e9f0" stroke-dasharray="4"/>
+      <line x1="0" y1="${Math.round(H*0.62)}" x2="${W}" y2="${Math.round(H*0.62)}" stroke="#e4e9f0" stroke-dasharray="4"/>
+      <polygon points="${fill}" fill="url(#rtg)"/>
+      <polyline points="${pts}" fill="none" stroke="#1a56db" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      ${xs.map((x,i)=>`
+        <circle cx="${x}" cy="${ys[i]}" r="${i===reportMonth-1?6:3.5}" fill="#1a56db"
+          ${i===reportMonth-1?'stroke="#fff" stroke-width="2"':''}/>
+        ${yearMonths[i].cnt>0?`<text x="${x}" y="${ys[i]-8}" fill="#1a56db" font-size="9" font-weight="700"
+          text-anchor="${i===0?'start':i===n-1?'end':'middle'}" font-family="DM Mono">${yearMonths[i].cnt}</text>`:''}
+        <text x="${x}" y="${H}" fill="${i===reportMonth-1?'#1a56db':'#9aa5b4'}" font-size="10"
+          font-weight="${i===reportMonth-1?'700':'400'}"
+          text-anchor="${i===0?'start':i===n-1?'end':'middle'}" font-family="DM Mono">${yearMonths[i].label}</text>
+      `).join('')}`;
+  }
+
+  // 발생처별 개별 추이 (해당 연도 12개월)
+  document.getElementById('r-occ-trend-sub').textContent = `${reportYear}년 발생처별 월별 현황 (By Occurrence)`;
+  const rOccWrap = document.getElementById('r-occ-charts-wrap');
+  const occSet = [...new Set(defects.map(d=>d.occurrence||'').filter(Boolean))];
+  if (!occSet.length) { rOccWrap.innerHTML='<div style="color:var(--text-muted);font-size:13px;padding:16px;text-align:center;">데이터 없음 (No Data)</div>'; }
+  else {
+    const W2=440, H2=110, padT2=20, padB2=22, padL=5, padR=15, n2=12;
+    rOccWrap.innerHTML = occSet.map(occ => {
+      const color  = occColorMap[occ]||'#9aa5b4';
+      const counts = yearMonths.map(m => defects.filter(d=>(d.date||'').startsWith(m.ym)&&d.occurrence===occ).length);
+      const maxV   = Math.max(...counts,1);
+      const xs2    = yearMonths.map((_,i) => Math.round(padL + i/(n2-1)*(W2-padL-padR)));
+      const ys2    = counts.map(cnt => Math.round(padT2+(1-cnt/maxV)*(H2-padT2-padB2)));
+      const pts2   = xs2.map((x,i)=>`${x},${ys2[i]}`).join(' ');
+      const fill2  = `${xs2[0]},${H2-padB2} ${pts2} ${xs2[n2-1]},${H2-padB2}`;
+      const total2 = counts.reduce((a,b)=>a+b,0);
+      const gridL  = [0.3,0.65].map(r=>`<line x1="${padL}" y1="${Math.round(padT2+r*(H2-padT2-padB2))}" x2="${W2-padR}" y2="${Math.round(padT2+r*(H2-padT2-padB2))}" stroke="#e4e9f0" stroke-dasharray="3"/>`).join('');
+      const dots   = xs2.map((x,i)=>`
+        <circle cx="${x}" cy="${ys2[i]}" r="${i===reportMonth-1?5:3}" fill="${color}" stroke="#fff" stroke-width="${i===reportMonth-1?2:1}"/>
+        ${counts[i]>0?`<text x="${x}" y="${ys2[i]-8}" fill="${color}" font-size="9" font-weight="700"
+          text-anchor="${i===0?'start':i===n2-1?'end':'middle'}" font-family="DM Mono">${counts[i]}</text>`:''}
+        <text x="${x}" y="${H2}" fill="${i===reportMonth-1?color:'#9aa5b4'}" font-size="9"
+          font-weight="${i===reportMonth-1?'700':'400'}"
+          text-anchor="${i===0?'start':i===n2-1?'end':'middle'}" font-family="DM Mono">${yearMonths[i].label}</text>
+      `).join('');
+      return `
+        <div style="background:var(--bg);border-radius:10px;padding:14px 16px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <div style="display:flex;align-items:center;gap:7px;">
+              <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${color};"></span>
+              <span style="font-size:13px;font-weight:700;color:var(--text);">${occ}${KO_EN[occ]?'<span style="font-size:10px;font-weight:400;color:var(--text-muted);margin-left:4px;">'+KO_EN[occ]+'</span>':''}</span>
+            </div>
+            <span style="font-size:12px;font-family:'DM Mono',monospace;color:${color};font-weight:700;">연간(Y) ${total2}건</span>
+          </div>
+          <svg width="100%" height="${H2}" viewBox="-5 0 ${W2+10} ${H2}" preserveAspectRatio="none">
+            ${gridL}
+            <polygon points="${fill2}" fill="${color}" opacity="0.08"/>
+            <polyline points="${pts2}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            ${dots}
+          </svg>
+        </div>`;
+    }).join('');
+  }
+
+  // 당월 불량 목록
+  document.getElementById('r-list-sub').textContent = `${ym} 등록(Registered) · ${curr.length}건`;
+  const statusKo = { open:'미처리<br><span style="font-size:10px;font-weight:400;">Open</span>', closed:'완료<br><span style="font-size:10px;font-weight:400;">Done</span>' };
+  document.getElementById('r-tbody').innerHTML = curr.length
+    ? [...curr].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(d=>`
+        <tr>
+          <td>${d.carModel||'-'}</td>
+          <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);">${d.partNo||'-'}</td>
+          <td style="font-weight:600;">${d.item}</td>
+          <td>${biLang(d.type)}</td>
+          <td>${biLang(d.occurrence)||'-'}</td>
+          <td style="font-family:'DM Mono',monospace;">${d.qty||'-'}</td>
+          <td>${biLang(d.owner)||'-'}</td>
+          <td style="font-family:'DM Mono',monospace;font-size:11px;">${(d.date||'').slice(0,10)}</td>
+        </tr>`).join('')
+    : '<tr><td colspan="10" style="text-align:center;color:var(--text-muted);padding:20px;">당월 불량 데이터가 없습니다. (No Defects)</td></tr>';
+
+  // 종합 의견
+  const topType  = groupBy(curr,'type')[0]?.[0]  || '-';
+  const topModel = groupBy(curr,'carModel')[0]?.[0] || '-';
+  const topOcc   = groupBy(curr,'occurrence')[0]?.[0] || '-';
+  const openRate = curr.length ? Math.round(open.length/curr.length*100) : 0;
+  document.getElementById('r-summary').innerHTML = `
+    <strong style="color:var(--text);">💡 ${label} 종합 의견</strong><br><br>
+    당월 총 <strong>${curr.length}건</strong>의 불량이 등록되었으며 (Monthly Total),
+    완료 처리율은 <strong style="color:${rate>=80?'var(--success)':'var(--danger)'};">${rate}%</strong>입니다.
+    ${diff>0?`전월 대비 <strong style="color:var(--danger);">+${diff}건 증가</strong>하였으므로 원인 분석이 필요합니다.`
+    :diff<0?`전월 대비 <strong style="color:var(--success);">${diff}건 감소</strong>하여 개선 추세입니다.`
+    :`전월과 동일한 수준입니다.`}
+    ${curr.length>0?`<br><br>
+    📌 <strong>주요 현황 (Key Summary):</strong><br>
+    · 최다 불량 유형: <strong>${topType}</strong><br>
+    · 최다 발생 모델: <strong>${topModel}</strong><br>
+    · 주요 발생처: <strong>${topOcc}</strong><br>
+    ${open.length>0?`· <span style="color:var(--danger);">미처리 ${open.length}건(${openRate}%) 조속한 조치 필요</span>`:'· ✅ 당월 불량 전건 처리 완료'}`:''}`;
+}
+
+
+function renderHomeDefects() {
+  const el = document.getElementById('home-defects');
+  if (!el) return;
+  el.innerHTML = defects.slice(0,4).map(d=>`
+    <div onclick="openDetail('${d.partNo}')" style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer;">
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${d.item} <span style="font-weight:400;color:var(--text-muted);">(${d.carModel||'-'})</span></div>
+        <div style="font-size:11px;color:var(--text-muted);">${d.type} · ${d.occurrence}</div>
+      </div>
+      <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text-light);flex-shrink:0;">${(d.date||"").slice(0,10)}</span>
+    </div>`).join('');
+}
+
+// ══ TABLE ══
+function getFiltered() {
+  return defects.filter(d=>{
+    const qOk  = !searchQ      || Object.values(d).join(' ').toLowerCase().includes(searchQ.toLowerCase());
+    const sOk  = !filterSev    || d.occurrence===filterSev || (filterSev==='HMI' && (d.occurrence==='HMI 1'||d.occurrence==='HMI 2'));
+    const stOk = !filterStatus || d.status===filterStatus;
+    // 날짜 범위 우선, 없으면 월 필터
+    const dt = (d.date||'').slice(0,10);
+    let mOk = true;
+    if (filterDateFrom || filterDateTo) {
+      if (filterDateFrom && dt < filterDateFrom) mOk = false;
+      if (filterDateTo   && dt > filterDateTo)   mOk = false;
+    } else {
+      mOk = !filterMonth || dt.startsWith(filterMonth);
+    }
+    return qOk && sOk && stOk && mOk;
+  });
+}
+
+function applyDateRange() {
+  filterDateFrom = document.getElementById('filter-date-from').value;
+  filterDateTo   = document.getElementById('filter-date-to').value;
+  if (filterDateFrom || filterDateTo) {
+    filterMonth = '';
+    document.getElementById('filter-month-label').textContent = '범위 선택';
+  }
+  renderTable();
+}
+
+function clearDateRange() {
+  filterDateFrom = '';
+  filterDateTo   = '';
+  document.getElementById('filter-date-from').value = '';
+  document.getElementById('filter-date-to').value   = '';
+  filterMonth = '';
+  renderTable();
+  document.getElementById('filter-month-label').textContent = '전체 All';
+}
+
+function changeFilterMonth(dir) {
+  // 날짜 범위 초기화
+  filterDateFrom = '';
+  filterDateTo   = '';
+  const df = document.getElementById('filter-date-from');
+  const dt = document.getElementById('filter-date-to');
+  if (df) df.value = '';
+  if (dt) dt.value = '';
+
+  if (!filterMonth) {
+    const n = new Date();
+    filterMonth = `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`;
+  }
+  const [y, m] = filterMonth.split('-').map(Number);
+  const d = new Date(y, m - 1 + dir, 1);
+  filterMonth = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+  updateFilterMonthLabel();
+  renderTable();
+}
+
+function updateFilterMonthLabel() {
+  const el = document.getElementById('filter-month-label');
+  if (!el) return;
+  if (!filterMonth) { el.textContent = '전체 All'; return; }
+  const [y, m] = filterMonth.split('-').map(Number);
+  el.textContent = `${y}년 ${m}월`;
+}
+
+function renderTable() {
+  const list=getFiltered(), tbody=document.getElementById('defect-tbody');
+  if(!list.length){ tbody.innerHTML=`<tr><td colspan="10"><div class="empty-state"><div class="empty-icon">🔍</div><p>해당하는 불량이 없습니다.</p></div></td></tr>`; return; }
+
+  tbody.innerHTML=list.map((d)=>{
+    // defects 배열의 실제 인덱스를 data-idx로 저장 → 같은 품번 여러 행 정확히 구분
+    const idx = defects.indexOf(d);
+    return `
+    <tr class="defect-row">
+      <td><button class="btn btn-sm edit-btn" data-idx="${idx}" onclick="event.stopPropagation();openEditModal(${idx})" style="background:var(--accent-light);color:var(--accent);border:1px solid #c7d7ff;padding:4px 7px;">✏️</button></td>
+      <td style="font-weight:600;">${d.carModel||'-'}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);">${d.partNo||'-'}</td>
+      <td style="font-weight:600;">${d.item}</td>
+      <td>${biLang(d.type)}</td>
+      <td>${biLang(d.occurrence)||'-'}</td>
+      <td>${biLang(d.owner)||'-'}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px;">${(d.date||'').slice(0,10)}</td>
+      <td style="text-align:center;">
+        ${Array.isArray(d.photos)&&d.photos.length
+          ? `<span class="photo-icon-btn" data-idx="${idx}" title="${d.photos.length}장" style="cursor:pointer;font-size:20px;display:inline-block;transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.25)'" onmouseout="this.style.transform='scale(1)'">📷</span><span style="font-size:10px;color:var(--text-muted);display:block;line-height:1.2;font-weight:600;">${d.photos.length}장</span>`
+          : '<span style="color:var(--border-dark);font-size:16px;">—</span>'}
+      </td>
+      <td style="font-size:12px;color:var(--text-muted);width:300px;min-width:300px;white-space:pre-wrap;word-break:break-word;line-height:1.5;">${d.desc||'-'}</td>
+      <td style="font-family:'DM Mono',monospace;text-align:center;">${d.qty||'-'}</td>
+      <td style="font-size:12px;color:var(--text-muted);width:300px;min-width:300px;white-space:pre-wrap;word-break:break-word;line-height:1.5;">${d.counter||'-'}</td>
+      <td style="font-size:12px;color:var(--text-muted);width:200px;min-width:200px;white-space:pre-wrap;word-break:break-word;line-height:1.5;">${d.remark||'-'}</td>
+    </tr>`;
+  }).join('');
+  updateBadge();
+
+  // 클릭 이벤트: data-idx 기반으로 정확한 defect 참조
+  tbody.onclick = function(e) {
+    const editBtn = e.target.closest('.edit-btn');
+    if (editBtn) {
+      openEditModal(Number(editBtn.dataset.idx));
+      return;
+    }
+    const photoBtn = e.target.closest('.photo-icon-btn');
+    if (photoBtn) {
+      e.stopPropagation();
+      const d = defects[Number(photoBtn.dataset.idx)];
+      if (d) openPhotoViewer(d);
+      return;
+    }
+  };
+}
+
+function filterDefects(q){searchQ=q;renderTable();}
+function setOccTab(el, occ) {
+  document.querySelectorAll('.occ-tab').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  filterSev = occ;
+  renderTable();
+}
+function filterBySev(v){filterSev=v;renderTable();}
+function filterByStatus(v){filterStatus=v;renderTable();}
+
+async function toggleStatus(partNo){
+  const d=defects.find(x=>x.partNo===partNo); if(!d) return;
+  d.status=d.status==='open'?'closed':'open';
+  renderTable(); renderHomeDefects(); updateBadge(); renderDashboard();
+  await sheetUpdate(d);
+}
+
+function updateBadge(){}
+
+// ── 모바일 사이드바 토글
+function saveProdQtyFromInput() {
+  const now   = new Date();
+  const thisYM = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const input = document.getElementById('prod-qty-input');
+  if (!input) return;
+  const qty = Number(input.value);
+  if (!qty || qty <= 0) { alert('생산수량을 올바르게 입력해 주세요.'); return; }
+  saveProdQty(thisYM, qty);
+}
+
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  const isOpen  = sidebar.classList.contains('open');
+  sidebar.classList.toggle('open', !isOpen);
+  overlay.classList.toggle('active', !isOpen);
+}
+
+// ── 모바일 탭바 활성화
+function setMobTab(name) {
+  document.querySelectorAll('.mobile-tab').forEach(t => t.classList.remove('active'));
+  const el = document.getElementById('mob-tab-' + name);
+  if (el) el.classList.add('active');
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar.classList.contains('open')) toggleSidebar();
+}
+
+// ══ DETAIL ══
+function openDetail(partNo){
+  const d=defects.find(x=>x.partNo===partNo); if(!d) return;
+  document.getElementById('detail-body').innerHTML=`
+    <div class="detail-row"><div class="detail-key">차종<br><span style="font-size:10px;opacity:.6;">Model</span></div><div class="detail-val">${d.carModel||'-'}</div></div>
+    <div class="detail-row"><div class="detail-key">품번<br><span style="font-size:10px;opacity:.6;">Part No.</span></div><div class="detail-val" style="font-family:'DM Mono',monospace;">${d.partNo||'-'}</div></div>
+    <div class="detail-row"><div class="detail-key">품목명<br><span style="font-size:10px;opacity:.6;">Part Name</span></div><div class="detail-val">${d.item}</div></div>
+    <div class="detail-row"><div class="detail-key">불량 유형<br><span style="font-size:10px;opacity:.6;">Defect Type</span></div><div class="detail-val">${d.type}${KO_EN[d.type]?'<br><span style="font-size:11px;color:var(--text-muted);">'+KO_EN[d.type]+'</span>':''}</div></div>
+    <div class="detail-row"><div class="detail-key">발생처<br><span style="font-size:10px;opacity:.6;">Occurrence</span></div><div class="detail-val">${d.occurrence||'-'}${KO_EN[d.occurrence]?'<br><span style="font-size:11px;color:var(--text-muted);">'+KO_EN[d.occurrence]+'</span>':''}</div></div>
+    <div class="detail-row"><div class="detail-key">불량 수량<br><span style="font-size:10px;opacity:.6;">Qty</span></div><div class="detail-val">${d.qty||'-'} ea</div></div>
+    <div class="detail-row"><div class="detail-key">귀책처<br><span style="font-size:10px;opacity:.6;">Responsibility</span></div><div class="detail-val">${(d.owner||'-').split(',').map(v=>{const en=KO_EN[v.trim()];return en?v.trim()+'<span style="font-size:11px;color:var(--text-muted);"> '+en+'</span>':v.trim();}).join('<br>')}</div></div>
+    <div class="detail-row"><div class="detail-key">등록일<br><span style="font-size:10px;opacity:.6;">Date</span></div><div class="detail-val">${(d.date||"").slice(0,10)}</div></div>
+    <div class="detail-row"><div class="detail-key">불량 내용<br><span style="font-size:10px;opacity:.6;">Description</span></div><div class="detail-val" style="line-height:1.7;">${d.desc}</div></div>
+    ${d.counter?`<div class="detail-row"><div class="detail-key">대책<br><span style="font-size:10px;opacity:.6;">Countermeasure</span></div><div class="detail-val" style="line-height:1.7;">${d.counter}</div></div>`:''}
+    ${d.remark?`<div class="detail-row"><div class="detail-key">비고<br><span style="font-size:10px;opacity:.6;">Remark</span></div><div class="detail-val">${d.remark}</div></div>`:''}
+    ${Array.isArray(d.photos)&&d.photos.length?`
+    <div style="margin-top:14px;">
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;font-weight:600;">사진 Photo</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        ${d.photos.map(p=>{const url=p.url||p;const thumb=p.thumb||url;return `<img src="${thumb}" onclick="viewPhoto('${url}')" style="width:90px;height:90px;border-radius:10px;object-fit:cover;cursor:zoom-in;border:2px solid var(--border);">`;}).join('')}
+      </div>
+    </div>`:''}
+  `;
+  const btn=document.getElementById('detail-action-btn');
+  btn.textContent=d.status==='open'?'✅ 완료 처리 (Done)':'🔄 미처리로 변경 (Reopen)';
+  btn.className=d.status==='open'?'btn btn-success':'btn btn-ghost';
+  btn.onclick=()=>{ toggleStatus(partNo); closeDetail(); };
+  document.getElementById('modal-detail').classList.add('open');
+}
+function closeDetail(){ document.getElementById('modal-detail').classList.remove('open'); }
+
+
+// ══ 불량 등록 ══
+function openModal(){
+  ['f-carmodel','f-partno','f-item','f-desc','f-qty','f-counter','f-remark'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  msSetValues('f-owner', []);
+  const fd = document.getElementById('f-date');
+  if (fd) fd.value = new Date().toISOString().slice(0,10);
+  uploadedPhotos=[]; renderPhotoGrid();
+  document.getElementById('f-photos').value='';
+  document.getElementById('modal-reg').classList.add('open');
+  const fab = document.querySelector('.fab-btn');
+  if (fab) fab.style.display = 'none';
+}
+function closeModal(){
+  uploadedPhotos=[]; renderPhotoGrid();
+  document.getElementById('modal-reg').classList.remove('open');
+  const fab = document.querySelector('.fab-btn');
+  if (fab) fab.style.display = '';
+}
+
+async function submitDefect(){
+  const item=document.getElementById('f-item').value.trim();
+  if(!item){ alert('품목명을 입력하세요.'); return; }
+  const inputPartNo = document.getElementById('f-partno').value.trim();
+  // 같은 품번이 이미 있으면 suffix 추가해서 고유하게 만들기
+  let uniquePartNo = inputPartNo || `PN-${Date.now()}`;
+  if (inputPartNo) {
+    const existing = defects.filter(x => x.partNo === inputPartNo || x.partNo.startsWith(inputPartNo + '-'));
+    if (existing.length > 0) uniquePartNo = `${inputPartNo}-${existing.length + 1}`;
+  }
+  const d={
+    carModel:   document.getElementById('f-carmodel').value||'-',
+    partNo:     uniquePartNo,
+    item,
+    serial:     '-',
+    type:       document.getElementById('f-type').value,
+    occurrence: document.getElementById('f-sev').value,
+    qty:        document.getElementById('f-qty').value||'-',
+    date:       document.getElementById('f-date')?.value || new Date().toISOString().slice(0,10),
+    owner:      msGetValues('f-owner').join(',')||'미지정',
+    status:     'open',
+    desc:       document.getElementById('f-desc').value||'-',
+    counter:    document.getElementById('f-counter').value||'',
+    remark:     document.getElementById('f-remark').value||'',
+    photos:     [...uploadedPhotos],
+  };
+  defects.unshift(d); uploadedPhotos=[];
+  closeModal(); renderHomeDefects(); renderTable(); updateBadge(); renderDashboard();
+  await sheetAdd(d);
+  showToast('success','불량 등록 완료',`${d.item} (${d.partNo})${GAS_URL?' · Sheets 저장됨':''}`);
+}
+
+// ══ 편집 ══
+let editingId=null;
+let editingIdx=null;
+function openEditModal(idx){
+  const d=defects[idx]; if(!d) return;
+  editingIdx=idx;
+  editingId=d.partNo; // 하위 호환용
+  document.getElementById('edit-id-label').textContent=`품번: ${d.partNo}`;
+  document.getElementById('e-carmodel').value = d.carModel||'';
+  document.getElementById('e-partno').value   = d.partNo||'';
+  document.getElementById('e-item').value     = d.item||'';
+  document.getElementById('e-qty').value      = d.qty||'';
+  msSetValues('e-owner', d.owner ? d.owner.split(',').map(s=>s.trim()) : []);
+  document.getElementById('e-desc').value     = d.desc||'';
+  document.getElementById('e-counter').value  = d.counter||'';
+  document.getElementById('e-remark').value   = d.remark||'';
+  document.getElementById('e-date').value     = (d.date||'').slice(0,10);
+  setSelectVal('e-type',d.type); setSelectVal('e-sev',d.occurrence);
+  // 기존 사진 초기화 후 해당 불량 사진만 로드
+  uploadedPhotos = [];
+  uploadedPhotos = Array.isArray(d.photos) ? d.photos.map(p => typeof p === 'string' ? {url:p,thumb:p} : p) : [];
+  document.getElementById('e-photos').value='';
+  renderEditPhotoGrid();
+  document.getElementById('modal-edit').classList.add('open');
+  const fab = document.querySelector('.fab-btn');
+  if (fab) fab.style.display = 'none';
+}
+function setSelectVal(id,val){
+  const sel=document.getElementById(id);
+  if(!sel) return;
+  for(let opt of sel.options){ if(opt.value===val||opt.text===val){sel.value=opt.value;break;} }
+}
+function closeEditModal(){
+  editingIdx=null;
+  uploadedPhotos=[]; renderEditPhotoGrid();
+  msSetValues('e-owner', []);
+  document.getElementById('modal-edit').classList.remove('open');
+  const fab = document.querySelector('.fab-btn');
+  if (fab) fab.style.display = '';
+}
+
+async function saveEdit(){
+  const item=document.getElementById('e-item').value.trim();
+  if(!item){ alert('품목명을 입력하세요.'); return; }
+  const d = editingIdx !== null ? defects[editingIdx] : defects.find(x=>x.partNo===editingId); if(!d) return;
+  d.carModel   = document.getElementById('e-carmodel').value||'-';
+  d.partNo     = document.getElementById('e-partno').value||d.partNo;
+  d.item=item; d.serial='-';
+  d.type=document.getElementById('e-type').value; d.occurrence=document.getElementById('e-sev').value;
+  d.qty=document.getElementById('e-qty').value||'-';
+  d.owner=msGetValues('e-owner').join(',')||'미지정';
+  d.date=document.getElementById('e-date').value; d.desc=document.getElementById('e-desc').value||'-'; d.counter=document.getElementById('e-counter').value||''; d.remark=document.getElementById('e-remark').value||'';
+  d.photos=[...uploadedPhotos];
+  closeEditModal(); renderTable(); renderHomeDefects(); updateBadge(); renderDashboard();
+  await sheetUpdate(d);
+  showToast('success','수정 완료',`${d.item}${GAS_URL?' · Sheets 저장됨':''}`);
+}
+
+async function deleteDefect(){
+  const delTarget = editingIdx !== null ? defects[editingIdx] : defects.find(x=>x.partNo===editingId);
+  if(!delTarget) return;
+  if(!confirm(`[품번: ${delTarget.partNo}] 불량을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`)) return;
+  defects.splice(defects.indexOf(delTarget), 1);
+  closeEditModal(); renderTable(); renderHomeDefects(); updateBadge(); renderDashboard();
+  await sheetDelete(delTarget.partNo);
+  showToast('info','삭제 완료',`품번 ${delTarget.partNo}${GAS_URL?' · Sheets에서도 삭제됨':''}`);
+}
+
+// ══ 엑셀 다운로드 ══
+function downloadExcel(){
+  const list=getFiltered();
+  const headers=['차종','품번','품목명','불량유형','발생처','불량수량','귀책처','등록일','불량내용','대책','비고'];
+  const rows=[headers,...list.map(d=>[d.carModel||'-',d.partNo||'-',d.item,d.type,d.occurrence||'-',d.qty||'-',d.owner,d.date,d.desc,d.counter||'',d.remark||''])];
+  const csv='\uFEFF'+rows.map(r=>r.map(c=>{const s=String(c??'');return s.includes(',')||s.includes('\n')||s.includes('"')?`"${s.replace(/"/g,'""')}"`  :s;}).join(',')).join('\r\n');
+  const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'})),download:`불량현황_${new Date().toISOString().slice(0,10)}.csv`});
+  a.click(); URL.revokeObjectURL(a.href);
+}
+
+// ══ CSV 업로드 ══
+const COL_MAP={'차종':'carModel','품번':'partNo','품목명':'item','불량유형':'type','발생처':'occurrence','불량수량':'qty','귀책처':'owner','등록일':'date','불량내용':'desc'};
+
+function handleExcelUpload(input){
+  const file=input.files[0]; if(!file) return; input.value='';
+  if(!file.name.endsWith('.csv')) {
+    showToast('info','형식 안내','CSV 파일을 업로드해 주세요.',6000); return;
+  }
+  // 1차: UTF-8 시도 → 한글 깨지면 EUC-KR로 재시도
+  const readerUTF = new FileReader();
+  readerUTF.onload = e => {
+    const text = e.target.result;
+    // 한글 깨짐 감지: 유니코드 대체문자(U+FFFD) 또는 ?가 과도하게 많으면 EUC-KR로 재시도
+    const brokenRatio = (text.match(/\uFFFD|\?{2,}/g)||[]).length / (text.length || 1);
+    if (brokenRatio > 0.01) {
+      // EUC-KR로 재시도
+      const readerEUC = new FileReader();
+      readerEUC.onload = e2 => parseAndImport(e2.target.result, file.name);
+      readerEUC.readAsText(file, 'EUC-KR');
+    } else {
+      parseAndImport(text, file.name);
+    }
+  };
+  readerUTF.readAsText(file, 'UTF-8');
+}
+
+async function parseAndImport(csvText,filename){
+  try{
+    const text=csvText.replace(/^\uFEFF/,''), lines=text.split(/\r?\n/).filter(l=>l.trim());
+    if(lines.length<2){ showToast('error','파일 오류','데이터가 없습니다.'); return; }
+    const headers=parseCSVRow(lines[0]), keyMap={};
+    headers.forEach((h,i)=>{ const key=COL_MAP[h.trim()]; if(key) keyMap[i]=key; });
+    if(!Object.values(keyMap).includes('item')){ showToast('error','헤더 불일치','품목명 컬럼을 찾을 수 없습니다.'); return; }
+    const newRows=[];
+    for(let i=1;i<lines.length;i++){
+      const cells=parseCSVRow(lines[i]); if(cells.every(c=>!c.trim())) continue;
+      const row={status:'open',photos:[]};
+      Object.entries(keyMap).forEach(([ci,field])=>{ row[field]=(cells[ci]||'').trim()||'-'; });
+      if(!row.partNo||row.partNo==='-') row.partNo=`PN-IMP-${String(i).padStart(3,'0')}`;
+newRows.push(row);
+    }
+    if(!newRows.length){ showToast('error','데이터 없음','유효한 데이터가 없습니다.'); return; }
+    let updated=0,added=0;
+    newRows.forEach(row=>{ const idx=defects.findIndex(d=>d.partNo===row.partNo); if(idx>=0){defects[idx]={...defects[idx],...row};updated++;}else{defects.unshift(row);added++;} });
+    renderTable(); renderHomeDefects(); updateBadge(); renderDashboard();
+    showToast('success','업로드 완료',`신규 ${added}건 추가 · ${updated}건 업데이트`);
+    await sheetSync(false);
+    if(GAS_URL) showToast('info','Sheets 동기화 완료','Google Sheets에 자동 저장되었습니다.');
+  }catch(err){ showToast('error','파싱 오류',err.message); }
+}
+
+function parseCSVRow(line){
+  const result=[]; let cur='',inQ=false;
+  for(let i=0;i<line.length;i++){ const ch=line[i]; if(ch==='"'){if(inQ&&line[i+1]==='"'){cur+='"';i++;}else inQ=!inQ;}else if(ch===','&&!inQ){result.push(cur);cur='';}else cur+=ch; }
+  result.push(cur); return result;
+}
+
+// ══ TOAST ══
+function showToast(type,title,msg,duration=4000){
+  const wrap=document.getElementById('toast-wrap'), icons={success:'✅',error:'❌',info:'ℹ️'};
+  const el=document.createElement('div'); el.className=`toast ${type}`;
+  el.innerHTML=`<div class="toast-icon">${icons[type]||'💬'}</div><div class="toast-body"><div class="toast-title">${title}</div>${msg?`<div class="toast-msg">${msg}</div>`:''}</div>`;
+  wrap.appendChild(el);
+  setTimeout(()=>{ el.classList.add('fade-out'); setTimeout(()=>el.remove(),300); },duration);
+}
+
+// ══ 사진 첨부 (imgbb 업로드) ══
+async function uploadToImgbb(file) {
+  const formData = new FormData();
+  formData.append('image', file);
+  try {
+    const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+      method: 'POST', body: formData
+    });
+    const json = await res.json();
+    if (json.success) return { url: json.data.url, thumb: json.data.thumb.url, display: json.data.display_url };
+    throw new Error(json.error?.message || '업로드 실패');
+  } catch(e) {
+    showToast('error', '사진 업로드 실패', e.message);
+    return null;
+  }
+}
+
+function handlePhotos(input) {
+  const files = Array.from(input.files).slice(0, 3 - uploadedPhotos.length);
+  if (!files.length) return;
+  input.value = '';
+
+  files.forEach(async (file) => {
+    // 미리보기용 임시 base64 표시
+    const tempId = 'temp_' + Date.now() + Math.random();
+    const reader = new FileReader();
+    reader.onload = e => {
+      uploadedPhotos.push({ url: e.target.result, thumb: e.target.result, _tempId: tempId, _uploading: true });
+      renderPhotoGrid();
+    };
+    reader.readAsDataURL(file);
+
+    // imgbb 실제 업로드
+    const result = await uploadToImgbb(file);
+    const idx = uploadedPhotos.findIndex(p => p._tempId === tempId);
+    if (idx !== -1) {
+      if (result) {
+        uploadedPhotos[idx] = { url: result.url, thumb: result.thumb, display: result.display };
+        showToast('success', '사진 업로드 완료', '');
+      } else {
+        uploadedPhotos.splice(idx, 1);
+      }
+      renderPhotoGrid();
+    }
+  });
+}
+
+function removePhoto(i) { uploadedPhotos.splice(i, 1); renderPhotoGrid(); }
+
+function renderPhotoGrid() {
+  const grid = document.getElementById('photo-grid');
+  if (!grid) return;
+  let html = uploadedPhotos.map((p, i) => {
+    const src = p.thumb || p.url || p;
+    const uploading = p._uploading;
+    return `<div class="photo-thumb-wrap" style="position:relative;">
+      <img src="${src}" style="width:80px;height:80px;border-radius:10px;object-fit:cover;display:block;${uploading?'opacity:.5;':''}" onclick="viewPhoto('${p.url||p}')">
+      ${uploading ? '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:18px;">⏳</div>' : ''}
+      <div class="photo-remove" onclick="removePhoto(${i})">✕</div>
+    </div>`;
+  }).join('');
+  if (uploadedPhotos.length < 3) html += `<div class="photo-add-btn" onclick="document.getElementById('f-photos').click()"><span style="font-size:22px;">📷</span><span>${uploadedPhotos.length===0?'사진 추가':'추가'}</span></div>`;
+  grid.innerHTML = html;
+}
+
+
+function openPhotoViewer(d) {
+  const photos = Array.isArray(d.photos) ? d.photos : [];
+  if (!photos.length) return;
+  let cur = 0;
+  const ov = document.createElement('div');
+  ov.id = 'photo-viewer-ov';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;';
+
+  function render() {
+    const p = photos[cur];
+    const url = p.url || p;
+    ov.innerHTML = `
+      <div style="color:rgba(255,255,255,.5);font-size:12px;">${d.partNo} · ${cur+1} / ${photos.length}</div>
+      <img src="${url}" style="max-width:88vw;max-height:72vh;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,.6);object-fit:contain;">
+      <div style="display:flex;gap:16px;align-items:center;">
+        ${photos.length>1 ? `<button onclick="event.stopPropagation();curPhoto(-1)" style="background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:50%;width:40px;height:40px;font-size:20px;cursor:pointer;">‹</button>` : ''}
+        <a href="${url}" target="_blank" style="color:#4a9eff;font-size:12px;text-decoration:none;">🔗 원본 보기</a>
+        ${photos.length>1 ? `<button onclick="event.stopPropagation();curPhoto(1)" style="background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:50%;width:40px;height:40px;font-size:20px;cursor:pointer;">›</button>` : ''}
+      </div>
+      <button onclick="document.getElementById('photo-viewer-ov').remove()" style="background:rgba(255,255,255,.12);border:none;color:#fff;border-radius:8px;padding:8px 20px;font-size:13px;cursor:pointer;">✕ 닫기 Close</button>
+    `;
+  }
+  window.curPhoto = (dir) => { cur = (cur + dir + photos.length) % photos.length; render(); };
+  ov.onclick = (e) => { if (e.target === ov) ov.remove(); };
+  document.body.appendChild(ov);
+  render();
+}
+
+function viewPhoto(url) {
+  if (!url || url.startsWith('data:')) return;
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;cursor:zoom-out;';
+  ov.innerHTML = `<img src="${url}" style="max-width:90vw;max-height:90vh;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,.6);">`;
+  ov.onclick = () => ov.remove();
+  document.body.appendChild(ov);
+}
+
+
+function handleEditPhotos(input) {
+  const files = Array.from(input.files).slice(0, 3 - uploadedPhotos.length);
+  input.value = '';
+  files.forEach(async (file) => {
+    const tempId = 'temp_' + Date.now() + Math.random();
+    const reader = new FileReader();
+    reader.onload = e => { uploadedPhotos.push({ url: e.target.result, thumb: e.target.result, _tempId: tempId, _uploading: true }); renderEditPhotoGrid(); };
+    reader.readAsDataURL(file);
+    const result = await uploadToImgbb(file);
+    const idx = uploadedPhotos.findIndex(p => p._tempId === tempId);
+    if (idx !== -1) {
+      if (result) { uploadedPhotos[idx] = { url: result.url, thumb: result.thumb, display: result.display }; showToast('success','사진 업로드 완료',''); }
+      else uploadedPhotos.splice(idx, 1);
+      renderEditPhotoGrid();
+    }
+  });
+}
+
+function removeEditPhoto(i) { uploadedPhotos.splice(i, 1); renderEditPhotoGrid(); }
+
+function renderEditPhotoGrid() {
+  const grid = document.getElementById('edit-photo-grid');
+  if (!grid) return;
+  let html = uploadedPhotos.map((p, i) => {
+    const src = p.thumb || p.url || p;
+    const uploading = p._uploading;
+    return `<div class="photo-thumb-wrap" style="position:relative;">
+      <img src="${src}" style="width:80px;height:80px;border-radius:10px;object-fit:cover;display:block;${uploading?'opacity:.5;':''}" onclick="viewPhoto('${p.url||p}')">
+      ${uploading ? '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:18px;">⏳</div>' : ''}
+      <div class="photo-remove" onclick="removeEditPhoto(${i})">✕</div>
+    </div>`;
+  }).join('');
+  if (uploadedPhotos.length < 3) html += `<div class="photo-add-btn" onclick="document.getElementById('e-photos').click()"><span style="font-size:22px;">📷</span><span>${uploadedPhotos.length===0?'사진 추가':'추가'}</span></div>`;
+  grid.innerHTML = html;
+}
+
+// ══ 드래그 앤 드롭 ══
+document.addEventListener('dragover', e=>{ e.preventDefault(); document.getElementById('upload-overlay').classList.add('active'); });
+document.addEventListener('dragleave', e=>{ if(!e.relatedTarget) document.getElementById('upload-overlay').classList.remove('active'); });
+document.addEventListener('drop', e=>{
+  e.preventDefault(); document.getElementById('upload-overlay').classList.remove('active');
+  const file=e.dataTransfer.files[0]; if(!file) return;
+  if(file.name.endsWith('.csv')){
+    const readerUTF = new FileReader();
+    readerUTF.onload = e => {
+      const text = e.target.result;
+      const brokenRatio = (text.match(/\uFFFD|\?{2,}/g)||[]).length / (text.length || 1);
+      if (brokenRatio > 0.01) {
+        const readerEUC = new FileReader();
+        readerEUC.onload = e2 => parseAndImport(e2.target.result, file.name);
+        readerEUC.readAsText(file, 'EUC-KR');
+      } else {
+        parseAndImport(text, file.name);
+      }
+    };
+    readerUTF.readAsText(file, 'UTF-8');
+  }
+  else showToast('info','파일 형식 안내','.csv 파일을 드래그해 주세요.');
+});
+
+// ══ OVERLAY CLOSE ══
+document.getElementById('modal-reg').addEventListener('click',    e=>{ if(e.target===e.currentTarget) closeModal(); });
+document.getElementById('modal-detail').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeDetail(); });
+document.getElementById('modal-edit').addEventListener('click',   e=>{ if(e.target===e.currentTarget) closeEditModal(); });
+
+// ══ 자동 폴링 (Sheets → 웹앱 자동 동기화) ══
+let countdownTimer = null;
+let pollSeconds    = 60;
+let countdown      = pollSeconds;
+let isPolling      = false;
+
+function togglePolling() {
+  if (!GAS_URL) { showToast('error','Sheets 미연결','먼저 Sheets 연동 설정을 해주세요.'); return; }
+  isPolling ? stopPolling() : startPolling();
+}
+
+function startPolling() {
+  isPolling = true;
+  countdown = pollSeconds;
+  updatePollBtn();
+  document.getElementById('sync-chip').classList.add('visible');
+  silentSheetLoad(); // 즉시 1회 로드
+  countdownTimer = setInterval(() => {
+    countdown--;
+    const el = document.getElementById('poll-countdown');
+    if (el) el.textContent = countdown;
+    if (countdown <= 0) { countdown = pollSeconds; silentSheetLoad(); }
+  }, 1000);
+}
+
+function stopPolling() {
+  isPolling = false;
+  clearInterval(countdownTimer);
+  countdownTimer = null;
+  document.getElementById('sync-chip').classList.remove('visible');
+  updatePollBtn();
+  showToast('info','자동 동기화 중지','꺼졌습니다. 다시 켜려면 버튼을 누르세요.');
+}
+
+function updatePollBtn() {
+  const btn = document.getElementById('poll-btn'); if (!btn) return;
+  if (isPolling) {
+    btn.innerHTML = '<span class="poll-dot"></span> 동기화 중';
+    btn.style.color = 'var(--success)';
+    btn.style.borderColor = 'rgba(5,122,85,0.4)';
+  } else {
+    btn.innerHTML = '⏱ 자동동기화<br><span style="font-size:10px;font-weight:400;opacity:.6;">Auto Sync</span>';
+    btn.style.color = 'var(--sidebar-text)';
+    btn.style.borderColor = 'rgba(255,255,255,0.1)';
+  }
+}
+
+// 조용히 로드 — 건수·내용 무관하게 항상 전체 교체
+async function silentSheetLoad() {
+  if (!GAS_URL) return;
+  try {
+    const res  = await fetch(GAS_URL + '?t=' + Date.now()); // 캐시 방지
+    const json = await res.json();
+    if (!json.ok) return;
+    const newData = json.data || [];
+    // 건수 OR 내용 중 하나라도 다르면 업데이트
+    const prevSig = defects.map(d => d.partNo + d.status + d.item).join('|');
+    const newSig  = newData.map(d => d.partNo + d.status + d.item).join('|');
+    if (newData.length !== defects.length || prevSig !== newSig) {
+      defects = newData.map(d => ({ ...d, photos:[] }));
+      renderHomeDefects(); renderTable(); updateBadge(); renderDashboard();
+      showToast('info','Sheets 변경 감지', `${defects.length}건으로 업데이트되었습니다.`, 2500);
+    }
+  } catch(e) { /* 폴링 오류 무시 */ }
+}
+
+
+// ══ 비밀번호 잠금 ══
+const APP_PASSWORD = '1234';  // ← 여기서 비밀번호 변경
+const IMGBB_API_KEY = '059ba8bb1cbc2c1e054a4bbd48876210'; // imgbb API 키
+
+function checkPassword() {
+  const val = document.getElementById('lock-input').value;
+  const err = document.getElementById('lock-error');
+  if (val === APP_PASSWORD) {
+    const ls = document.getElementById('lock-screen');
+    ls.style.transition = 'opacity 0.4s';
+    ls.style.opacity = '0';
+    setTimeout(() => ls.style.display = 'none', 400);
+  } else {
+    err.style.opacity = '1';
+    document.getElementById('lock-input').value = '';
+    document.getElementById('lock-input').style.borderColor = '#ff6b6b';
+    setTimeout(() => {
+      err.style.opacity = '0';
+      document.getElementById('lock-input').style.borderColor = 'rgba(255,255,255,0.15)';
+    }, 2000);
+  }
+}
+
+function toggleLockPw() {
+  const inp = document.getElementById('lock-input');
+  const btn = document.getElementById('lock-eye-btn');
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    inp.type = 'password';
+    btn.textContent = '👁';
+  }
+}
+
+// ══ INIT ══
+msInit();
+renderHomeDefects();
+renderDashboard();
+updateBadge();
+updateSheetBtn();
+updatePollBtn();
+updateFilterMonthLabel();
+if (GAS_URL) sheetLoad();
+
+
+
+
+
+
+</script>
+</body>
+</html>
