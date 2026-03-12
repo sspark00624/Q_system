@@ -1751,7 +1751,7 @@ document.addEventListener('click', e => {
 //  Google Sheets 연동 설정
 //  Apps Script 배포 후 사이드바 하단 버튼으로 URL 입력
 // ══════════════════════════════════════════════════════
-let GAS_URL = localStorage.getItem('gas_url') || 'https://script.google.com/macros/s/AKfycbzwPeSmMkhJYaH-ryOKSd8cuJr6vQERmFzKmSbpV-XeAk56m6cpk9YFjh06xlQjo-qq/exec';
+let GAS_URL = localStorage.getItem('gas_url') || 'https://script.google.com/macros/s/AKfycbw8ZJfIu7479gCBvpstRSNNa473rezuAt1ZLUP1ngTKyaDrxdZJnW2GMa8qar8R1dff/exec';
 
 // ══ DATA ══
 let defects = [
@@ -1802,14 +1802,20 @@ async function sheetLoad() {
       defects = json.data.map(d => {
         let photos = [];
         if (d.photos && String(d.photos).trim()) {
-          // Sheets에 photos URL 있으면 복원
           photos = String(d.photos).split('|').filter(Boolean).map(url => ({ url, thumb: url }));
         } else if (d._row && existingPhotoMap[d._row]) {
-          // _row 기준으로 해당 행의 사진만 유지 (같은 품번 다른 행 사진 섞임 방지)
           photos = existingPhotoMap[d._row];
         }
+        // status: 시트에 없는 경우 기본값 처리
+        let status = String(d.status ?? '').trim().toLowerCase();
+        if (status !== 'open' && status !== 'closed') status = 'open';
+        // date: 날짜 정규화 (Date 객체나 다른 포맷 처리)
+        let date = String(d.date ?? '').trim();
+        if (date && date.length > 10) date = date.slice(0, 10);
         return {
           ...d,
+          status,
+          date,
           photos,
           counter: String(d.counter ?? '').trim(),
           remark:  String(d.remark  ?? '').trim(),
@@ -1980,13 +1986,21 @@ function goPage(name, el) {
 function renderDashboard() {
   const now    = new Date();
   const thisYM = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  const label  = `${now.getFullYear()}년 ${now.getMonth()+1}월`;
 
-  // 당월 데이터
-  const monthData = defects.filter(d => (d.date||'').startsWith(thisYM));
+  // 당월 데이터가 없으면 데이터가 있는 가장 최근 월로 폴백
+  let activeYM = thisYM;
+  const monthData0 = defects.filter(d => (d.date||'').startsWith(thisYM));
+  if (monthData0.length === 0 && defects.length > 0) {
+    const allDates = defects.map(d => (d.date||'').slice(0,7)).filter(Boolean).sort().reverse();
+    if (allDates.length > 0) activeYM = allDates[0];
+  }
+  const monthData = defects.filter(d => (d.date||'').startsWith(activeYM));
+  const [ay, am] = activeYM.split('-');
+  const label = `${ay}년 ${Number(am)}월${activeYM !== thisYM ? ' ⚠️(최근데이터)' : ''}`;
 
-  // 전월 비교
-  const prevD  = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  // 전월 비교 (activeYM 기준)
+  const [_ay, _am] = activeYM.split('-').map(Number);
+  const prevD  = new Date(_ay, _am - 2, 1);
   const prevYM = `${prevD.getFullYear()}-${String(prevD.getMonth()+1).padStart(2,'0')}`;
   const prevMonth = defects.filter(d => (d.date||'').startsWith(prevYM));
   const diff   = monthData.length - prevMonth.length;
@@ -2006,7 +2020,7 @@ function renderDashboard() {
 
   // KPI 렌더링
   document.getElementById('kpi-total').textContent        = monthData.length + '건';
-  document.getElementById('kpi-total-sub').textContent    = `${label} · MoM ${diff>0?'▲+'+diff:diff<0?'▼'+diff:'─'} 건`;
+  document.getElementById('kpi-total-sub').textContent    = `${label} 기준 · MoM ${diff>0?'▲+'+diff:diff<0?'▼'+diff:'─'} 건`;
   document.getElementById('kpi-closed-rate').textContent  = customerDefects.length + '건';
   document.getElementById('kpi-closed-sub').textContent   = `HMI 1: ${monthData.filter(d=>d.occurrence==='HMI 1').length}건 · HMI 2: ${monthData.filter(d=>d.occurrence==='HMI 2').length}건`;
   document.getElementById('kpi-thismonth').textContent    = gqmsDefects.length + '건';
@@ -2362,12 +2376,21 @@ function changeReportMonth(dir) {
 }
 
 function renderReport() {
-  const ym     = `${reportYear}-${String(reportMonth).padStart(2,'0')}`;
+  let ym     = `${reportYear}-${String(reportMonth).padStart(2,'0')}`;
+  // 해당 월 데이터 없으면 최근 데이터 월로 자동 이동
+  let curr   = defects.filter(d => (d.date||'').startsWith(ym));
+  if (curr.length === 0 && defects.length > 0) {
+    const allYMs = [...new Set(defects.map(d => (d.date||'').slice(0,7)).filter(Boolean))].sort().reverse();
+    if (allYMs.length > 0) {
+      ym = allYMs[0];
+      const [ry, rm] = ym.split('-').map(Number);
+      reportYear = ry; reportMonth = rm;
+      curr = defects.filter(d => (d.date||'').startsWith(ym));
+    }
+  }
   const prevD  = new Date(reportYear, reportMonth - 2, 1);
   const prevYM = `${prevD.getFullYear()}-${String(prevD.getMonth()+1).padStart(2,'0')}`;
   const label  = `${reportYear}년 ${reportMonth}월`;
-
-  const curr   = defects.filter(d => (d.date||'').startsWith(ym));
   const prev   = defects.filter(d => (d.date||'').startsWith(prevYM));
   // 고객사 불량 (HMI 1 + HMI 2)
   const customerDef = curr.filter(d => d.occurrence === 'HMI 1' || d.occurrence === 'HMI 2');
@@ -2565,7 +2588,8 @@ function renderReport() {
   const topType  = groupBy(curr,'type')[0]?.[0]  || '-';
   const topModel = groupBy(curr,'carModel')[0]?.[0] || '-';
   const topOcc   = groupBy(curr,'occurrence')[0]?.[0] || '-';
-  const openRate = curr.length ? Math.round(open.length/curr.length*100) : 0;
+  const openList = curr.filter(d => d.status === 'open');
+  const rate     = curr.length ? Math.round((curr.length - openList.length) / curr.length * 100) : 0;
   document.getElementById('r-summary').innerHTML = `
     <strong style="color:var(--text);">💡 ${label} 종합 의견</strong><br><br>
     당월 총 <strong>${curr.length}건</strong>의 불량이 등록되었으며 (Monthly Total),
@@ -2578,7 +2602,7 @@ function renderReport() {
     · 최다 불량 유형: <strong>${topType}</strong><br>
     · 최다 발생 모델: <strong>${topModel}</strong><br>
     · 주요 발생처: <strong>${topOcc}</strong><br>
-    ${open.length>0?`· <span style="color:var(--danger);">미처리 ${open.length}건(${openRate}%) 조속한 조치 필요</span>`:'· ✅ 당월 불량 전건 처리 완료'}`:''}`;
+    ${open.length>0?`· <span style="color:var(--danger);">미처리 ${openList.length}건(${100-rate}%) 조속한 조치 필요</span>`:'· ✅ 당월 불량 전건 처리 완료'}`:''}`;
 }
 
 
@@ -3199,19 +3223,40 @@ function updatePollBtn() {
   }
 }
 
-// 조용히 로드 — 건수·내용 무관하게 항상 전체 교체
+// 조용히 로드 — 변경 감지 강화 + status/date/photos 정규화
 async function silentSheetLoad() {
   if (!GAS_URL) return;
   try {
-    const res  = await fetch(GAS_URL + '?t=' + Date.now()); // 캐시 방지
+    const res  = await fetch(GAS_URL + '?t=' + Date.now());
     const json = await res.json();
     if (!json.ok) return;
-    const newData = json.data || [];
-    // 건수 OR 내용 중 하나라도 다르면 업데이트
-    const prevSig = defects.map(d => d.partNo + d.status + d.item).join('|');
-    const newSig  = newData.map(d => d.partNo + d.status + d.item).join('|');
-    if (newData.length !== defects.length || prevSig !== newSig) {
-      defects = newData.map(d => ({ ...d, photos:[] }));
+    const rawData = json.data || [];
+    // status/date 정규화
+    const newData = rawData.map(d => {
+      let status = String(d.status ?? '').trim().toLowerCase();
+      if (status !== 'open' && status !== 'closed') status = 'open';
+      let date = String(d.date ?? '').trim();
+      if (date && date.length > 10) date = date.slice(0, 10);
+      return { ...d, status, date };
+    });
+    const sig = arr => arr.map(d => [d.partNo, d.status, d.item, d.desc, d.counter, d.qty].join('~')).join('|');
+    if (newData.length !== defects.length || sig(newData) !== sig(defects)) {
+      const photoMap = {};
+      defects.forEach(x => { photoMap[x._row || x.partNo] = x.photos; });
+      defects = newData.map(d => {
+        let photos = [];
+        if (d.photos && String(d.photos).trim()) {
+          photos = String(d.photos).split('|').filter(Boolean).map(url => ({ url, thumb: url }));
+        } else {
+          photos = photoMap[d._row || d.partNo] || [];
+        }
+        return { ...d, photos,
+          counter: String(d.counter ?? '').trim(),
+          remark:  String(d.remark  ?? '').trim(),
+          desc:    String(d.desc    ?? '').trim(),
+          qty:     String(d.qty     ?? '').trim(),
+        };
+      });
       renderHomeDefects(); renderTable(); updateBadge(); renderDashboard();
       showToast('info','Sheets 변경 감지', `${defects.length}건으로 업데이트되었습니다.`, 2500);
     }
@@ -3221,7 +3266,7 @@ async function silentSheetLoad() {
 
 // ══ 비밀번호 잠금 ══
 const APP_PASSWORD = '1234';  // ← 여기서 비밀번호 변경
-const IMGBB_API_KEY = '059ba8bb1cbc2c1e054a4bbd48876210'; // imgbb API 키
+const IMGBB_API_KEY = 'e32106bc18fb2c978046656795075263'; // imgbb API 키
 
 function checkPassword() {
   const val = document.getElementById('lock-input').value;
@@ -3230,7 +3275,10 @@ function checkPassword() {
     const ls = document.getElementById('lock-screen');
     ls.style.transition = 'opacity 0.4s';
     ls.style.opacity = '0';
-    setTimeout(() => ls.style.display = 'none', 400);
+    setTimeout(() => {
+      ls.style.display = 'none';
+      if (!GAS_URL) showGasSetupBanner();
+    }, 400);
   } else {
     err.style.opacity = '1';
     document.getElementById('lock-input').value = '';
@@ -3240,6 +3288,33 @@ function checkPassword() {
       document.getElementById('lock-input').style.borderColor = 'rgba(255,255,255,0.15)';
     }, 2000);
   }
+}
+
+function showGasSetupBanner() {
+  if (document.getElementById('gas-setup-banner')) return;
+  const banner = document.createElement('div');
+  banner.id = 'gas-setup-banner';
+  banner.style.cssText = `
+    position:fixed; top:0; left:0; right:0; z-index:9999;
+    background:linear-gradient(90deg,#1a56db,#0891b2);
+    color:#fff; padding:14px 20px;
+    display:flex; align-items:center; gap:14px;
+    box-shadow:0 4px 16px rgba(0,0,0,0.18); font-size:14px;
+  `;
+  banner.innerHTML = `
+    <span style="font-size:22px;">🔗</span>
+    <div style="flex:1;">
+      <div style="font-weight:700;margin-bottom:2px;">Google Sheets 연동이 필요합니다</div>
+      <div style="font-size:12px;opacity:.85;">사이드바 하단 <b>🔗 Sheets 연동 설정</b> 버튼을 클릭하여 본인의 Apps Script URL을 입력해 주세요.</div>
+    </div>
+    <button onclick="openGasSetup();document.getElementById('gas-setup-banner').remove();"
+      style="background:#fff;color:#1a56db;border:none;border-radius:8px;padding:8px 16px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;">
+      지금 설정하기
+    </button>
+    <button onclick="this.parentElement.remove();"
+      style="background:transparent;color:#fff;border:none;font-size:20px;cursor:pointer;line-height:1;opacity:.7;">✕</button>
+  `;
+  document.body.appendChild(banner);
 }
 
 function toggleLockPw() {
@@ -3262,7 +3337,10 @@ updateBadge();
 updateSheetBtn();
 updatePollBtn();
 updateFilterMonthLabel();
-if (GAS_URL) sheetLoad();
+if (GAS_URL) {
+  sheetLoad();
+  setTimeout(() => { if (GAS_URL && !isPolling) startPolling(); }, 4000);
+}
 
 
 
